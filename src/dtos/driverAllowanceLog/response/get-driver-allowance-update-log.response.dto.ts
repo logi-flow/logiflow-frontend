@@ -1,4 +1,4 @@
-export interface GetDeductionTypeUpdateLogResponseDto {
+export interface GetDriverAllowanceUpdateLogResponseDto {
   id: number;
   driverId: number;
   driverName: number;
