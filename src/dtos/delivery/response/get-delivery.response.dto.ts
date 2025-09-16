@@ -1,0 +1,28 @@
+export interface GetDeliveryResponseDto {
+  id: number;
+  contractId: number;
+  customerId: number;
+  requestDate: string;
+  item: string;
+  weight: number;
+  message: string;
+  isHidden: boolean;
+  status: string;
+  pickupName: string;
+  pickupPhone: string;
+  pickupZipcode: string;
+  pickupAddress: string;
+  pickupAddressDetail: string;
+  recipientName: string;
+  recipientPhone: string;
+  recipientZipcode: string;
+  recipientAddress: string;
+  recipientAddressDetail: string;
+  finalFee: number;
+  overWeightFee: number;
+  overParcelFee: number;
+  isOverWeight: boolean;
+  isOverParcel: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
