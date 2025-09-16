@@ -14,9 +14,9 @@ export const getAllowanceTypeUpdateLogs = async (
   try {
     const response = await axiosInstance.get(
       GET_ALLOWANCE_TYPE_UPDATE_LOGS_URL, {
-        params: { page, size, sort },
-        ...bearerAuthorization(accessToken)
-      }
+      params: { page, size, sort },
+      ...bearerAuthorization(accessToken)
+    }
     );
     return responseSuccessHandler(response);
   } catch (error) {
