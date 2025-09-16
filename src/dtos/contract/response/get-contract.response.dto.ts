@@ -1,4 +1,4 @@
-export interface getContractResponseDto {
+export interface GetContractResponseDto {
   id: number;
   customerId: number;
   status: string;

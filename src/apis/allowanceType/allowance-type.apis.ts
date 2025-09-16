@@ -35,9 +35,9 @@ export const getAllAllowanceType = async (
   try {
     const response = await axiosInstance.get(
       GET_ALL_ALLOWANCE_TYPE_URL, {
-        params: { page, size, sort },
-        ...bearerAuthorization(accessToken)
-      }
+      params: { page, size, sort },
+      ...bearerAuthorization(accessToken)
+    }
     );
     return responseSuccessHandler(response);
   } catch (error) {
@@ -87,7 +87,7 @@ export const deleteAllowanceType = async (
       bearerAuthorization(accessToken)
     );
     return responseSuccessHandler(response);
-  } catch (error) { 
+  } catch (error) {
     return responseErrorHandler(error as AxiosError<ResponseDto>);
   }
 };
