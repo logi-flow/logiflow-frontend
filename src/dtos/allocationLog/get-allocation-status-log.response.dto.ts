@@ -1,4 +1,4 @@
-export interface getAllocationStatusLogResponseDto {
+export interface GetAllocationStatusLogResponseDto {
   deliveryId: number;
   returnDeliveryId: number;
   driverName: string;

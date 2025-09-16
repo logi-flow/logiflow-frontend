@@ -1,4 +1,4 @@
-export interface CreateContractRequestDto {
+export interface CreateAllocationRequestDto {
   deliveryId?: number;
   returnDeliveryId?: number;
   assignmentId: number;
