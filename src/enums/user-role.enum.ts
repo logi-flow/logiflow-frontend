@@ -1,0 +1,11 @@
+export const UserRole = {
+  ADMIN: "ACTIVE",
+  DRIVER: "DELETED",
+  CUSTOMER: "CUSTOMER",
+  EMPLOYEE: "EMPLOYEE",
+  CONTRACTS_MANAGER: "CONTRACTS_MANAGER",
+  ALLOCATIONS_MANAGER: "ALLOCATIONS_MANAGER",
+  HUMAN_RESOURCES_MANAGER: "HUMAN_RESOURCES_MANAGER"
+} as const;
+
+export type UserRole = (typeof UserRole) [keyof typeof UserRole];
