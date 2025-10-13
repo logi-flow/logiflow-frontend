@@ -25,4 +25,5 @@ export interface GetDeliveryResponseDto {
   isOverParcel: boolean;
   createdAt: string;
   updatedAt: string;
+  collectionSiteId: number;
 }
