@@ -1,21 +1,16 @@
-import './App.css'
-import { Route, Routes } from 'react-router-dom'
-import AttendanceRegisterPage from './pages/attendance/AttendanceRegisterPage'
-import MyAttendanceListPage from './pages/attendance/MyAttendanceListPage';
-import AllAttendanceListPage from './pages/attendance/AllAttendanceListPage';
+import { Box } from '@mui/material'
+import React from 'react'
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
 
 function App() {
 
   return (
-    <>
-      <Routes>
-        {/* <Route path='/' element={< />} */}
+    <Box sx={{ display: 'flex' }}>
+      <Header />
+      <Sidebar />
+    </Box>
 
-        <Route path='/attendance/list' element={<AllAttendanceListPage />} />
-        <Route path='/attendance/me/register' element={<AttendanceRegisterPage />} />
-        <Route path='/attendance/me/list' element={<MyAttendanceListPage />} />
-      </Routes>
-    </>
   )
 }
 

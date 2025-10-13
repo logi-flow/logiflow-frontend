@@ -10,12 +10,13 @@ import type { GetAllContractResponseDto } from "../../dtos/contract/response/get
 import type { CreateContractRequestDto } from "../../dtos/contract/request/create-contract.request.dto";
 
 export const createContract = async (
+  customerId: number,
   dto: CreateContractRequestDto,
   accessToken: string
 ): Promise<ResponseDto<GetContractResponseDto>> => {
   try {
     const response = await axiosInstance.post(
-      CREATE_CONTRACT_URL,
+      `${CREATE_CONTRACT_URL}/${customerId}`,
       dto,
       bearerAuthorization(accessToken)
     );
