@@ -7,4 +7,4 @@ export const DeliveryStatus = {
   DELETED: "DELETED",
 } as const;
 
-export type DeliveryStatus = (typeof DeliveryStatus) [keyof typeof DeliveryStatus];
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus];
