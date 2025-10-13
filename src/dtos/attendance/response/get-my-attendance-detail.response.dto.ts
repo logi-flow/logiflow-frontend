@@ -1,8 +1,8 @@
 export interface GetMyAttendanceDetailResponseDto {
-  isOpen: boolean;
-  workStart: string;
-  workEnd: string;
+  open: boolean;
+  workStart: string | null;
+  workEnd: string | null;
   
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 }

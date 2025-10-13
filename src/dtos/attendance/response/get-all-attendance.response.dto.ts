@@ -1,4 +1,5 @@
 export interface GetAllAttendanceResponseDto {
+  id: number;
   driverId: number;
   driverName: string;
   workStart: string;

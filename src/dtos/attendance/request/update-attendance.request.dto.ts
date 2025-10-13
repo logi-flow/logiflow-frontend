@@ -1,3 +1,3 @@
 export interface UpdateAttendanceRequestDto {
-  vehicleMileage: number;
+  vehicleMileage: number | undefined;
 }
