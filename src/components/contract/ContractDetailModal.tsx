@@ -14,8 +14,6 @@ type ContractModalProps = {
 
 function ContractDetailModal(props: ContractModalProps) {
 
-
-
   const { isOpen, onClose, onDelete, onUpdate, contract } = props;
   const [isEditing, setIsEditing] = useState(false);
   const [editableContract, setEditableContract] = useState<GetContractResponseDto | null>(null);

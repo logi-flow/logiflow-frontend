@@ -1,9 +1,9 @@
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Toolbar, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import Sidebar from '../../components/Sidebar'
-import Header from '../../components/Header'
-import { createContract } from '../../apis/contract/contract.apis';
-import type { CreateContractRequestDto } from '../../dtos/contract/request/create-contract.request.dto';
+import Sidebar from '../../../components/Sidebar'
+import Header from '../../../components/Header'
+import { createContract } from '../../../apis/contract/contract.apis';
+import type { CreateContractRequestDto } from '../../../dtos/contract/request/create-contract.request.dto';
 
 const customers = [
   { id: 1, name: 'Customer A' },
@@ -13,7 +13,7 @@ const customers = [
 
 function CreateContractPage() {
 
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDE1NjU3OCwiZXhwIjoxNzYwMTkyNTc4fQ.2_bFlTHLL68w_M4y9RxxCJNOMzAHks0OG5mo3wu78D4";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDMyOTUwMCwiZXhwIjoxNzYwMzY1NTAwfQ.4_nCw4WXhX7AWAP3GZMrQMkCidFz4rXGwAKruuzNwnQ";
 
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
 
