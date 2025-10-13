@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, Stack, TextField } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, TextField } from "@mui/material";
 import { useEffect, useState, type FormEvent } from "react";
 
 interface Props {
@@ -61,11 +61,6 @@ function CheckOutDialog({ open, loading, onClose, onConfirm }: Props) {
                 value={vehicleMileage}
                 onChange={(e) => setVehicleMileage(e.target.value)}
                 fullWidth
-                slotProps={{
-                  input: {
-                    endAdornment: <InputAdornment position="end">km</InputAdornment>,
-                  },
-                }}
                 error={isVehicleMileageInvalid}
                 helperText={vehicleMileageHelperText}
               />
