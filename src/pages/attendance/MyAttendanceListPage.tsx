@@ -1,16 +1,19 @@
-import { Box, Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, Pagination, TableRow, Typography, CircularProgress } from "@mui/material";
-import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import { Box, Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, Pagination, TableRow, Typography, CircularProgress, Toolbar } from "@mui/material";
+import EditDocumentIcon from '@mui/icons-material/EditNote';
 import { useEffect, useState, type ChangeEvent } from "react";
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 import { getAllMyAttendance, getAttendanceDetail } from "../../apis/attendance/attendance.apis";
 import type { GetAllMyAttendanceResponseDto } from "../../dtos/attendance/response/get-all-my-attendance.response.dto";
 import type PageDto from "../../dtos/page.dto";
 import type { GetAttendanceDetailResponseDto } from "../../dtos/attendance/response/get-attendance-detail.response.dto";
-import AttendanceDetailDialog from "./AttendanceDetailDialog";
+import AttendanceDetailModal from "../../components/attendance/AttendanceDetailModal";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
 
 function MyAttendanceListPage() {
-  const [cookies] = useCookies(["accessToken"]);
-  const accessToken = cookies.accessToken;
+  // const [cookies] = useCookies(["accessToken"]);
+  // const accessToken = cookies.accessToken;
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkcml2ZXIwMDMiLCJyb2xlIjoiRFJJVkVSIiwiaWF0IjoxNzYwMzI5NTM1LCJleHAiOjE3NjAzNjU1MzV9.UoHQTgtiClYDeQjAijgby_yefknx4uVOIJG8fkuvikk";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -99,11 +102,14 @@ function MyAttendanceListPage() {
   const handleModalClose = () => setModal(false);
 
   return (
-    <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
-      <Box sx={{ width: '100%', minWidth: 208, maxWidth: 1000 }}>
-        <Stack sx={{ p: 3 }} direction="row" alignItems="center" justifyContent="space-between">
+    <Box sx={{ display: 'flex' }}>
+      <Header />
+      <Sidebar />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h6" fontWeight={700}>
-            출 · 퇴근 조회 (본인)
+            내 출근부 조회
           </Typography>
         </Stack>
 
@@ -184,7 +190,7 @@ function MyAttendanceListPage() {
           </Stack>
         )}
 
-        <AttendanceDetailDialog
+        <AttendanceDetailModal
           attendance={selectedAttendance}
           open={modal}
           loading={detailLoading}
