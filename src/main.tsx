@@ -6,6 +6,8 @@ import App from './App'
 import CreateContractPage from './pages/admin/contract/CreateContractPage'
 import CreateDeliveryPage from './pages/delivery/CreateDeliveryPage'
 import DeliveryListPage from './pages/admin/delivery/DeliveryListPage'
+import CustomerContractListPage from './pages/contract/CustomerContractListPage'
+import CustomerDeliveryListPage from './pages/delivery/CustomerDeliveryListPage'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -18,6 +20,8 @@ createRoot(document.getElementById('root')!).render(
 
     <Routes>
       <Route path='/delivery/create' element={<CreateDeliveryPage />} />
+      <Route path='/contracts/me' element={<CustomerContractListPage />} />
+      <Route path='/deliveries/me' element={<CustomerDeliveryListPage />} />
     </Routes>
   </BrowserRouter>,
 )
