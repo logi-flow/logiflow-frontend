@@ -21,7 +21,7 @@ function CreateDeliveryPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwMzI5NTY0LCJleHAiOjE3NjAzNjU1NjR9.Lp5gcljRIWZ0cZcoc_jGiDWyykwHkYqXyG0YNHMWFyM"
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNDk3MzcxLCJleHAiOjE3NjA1MzMzNzF9.yvx0M-CwE2Ck9LIgFr1U8FTrG58MsRJbAhsmYn9jTwA"
 
   const [contracts, setContracts] = useState<GetAllContractResponseDto[]>([]);
 

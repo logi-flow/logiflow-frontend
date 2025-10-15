@@ -13,6 +13,7 @@ export interface GetDeliveryResponseDto {
   pickupZipcode: string;
   pickupAddress: string;
   pickupAddressDetail: string;
+  collectionSiteId: number;
   recipientName: string;
   recipientPhone: string;
   recipientZipcode: string;
@@ -25,5 +26,4 @@ export interface GetDeliveryResponseDto {
   isOverParcel: boolean;
   createdAt: string;
   updatedAt: string;
-  collectionSiteId: number;
 }

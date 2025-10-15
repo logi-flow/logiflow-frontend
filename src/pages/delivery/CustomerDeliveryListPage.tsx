@@ -1,21 +1,23 @@
-import { Box, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import Header from '../../../components/Header';
-import Sidebar from '../../../components/Sidebar';
-import type { GetDeliveryResponseDto } from '../../../dtos/delivery/response/get-delivery.response.dto';
-import { deleteDelivery, getAllDelivery, getDeliveryDetail, updateDeliveryStatus } from '../../../apis/delivery/delivery.apis';
+import Header from '../../components/Header'
+import Sidebar from '../../components/Sidebar'
+import type { GetDeliveryResponseDto } from '../../dtos/delivery/response/get-delivery.response.dto';
+import { getDeliveryDetail, getMyDelivery, updateDelivery, updateDeliveryIsHidden } from '../../apis/delivery/delivery.apis';
+import type { UpdateDeliveryIsHiddenRequestDto } from '../../dtos/delivery/request/update-delivery-is-hidden.request.dto';
+import type { UpdateDeliveryRequestDto } from '../../dtos/delivery/request/update-delivery.request.dto';
+import { DeliveryStatus } from '../../enums/delivery-status.enum';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import DeliveryDetailModal from '../../../components/delivery/DeliveryDetailModal';
-import type { UpdateDeliveryStatusRequestDto } from '../../../dtos/delivery/request/update-delivery-status.request.dto';
-import { DeliveryStatus } from '../../../enums/delivery-status.enum';
+import CustomerDeliveryDetailModal from '../../components/delivery/CustomerDeliveryDetailModal';
+import type { GetAllDeliveryResponseDto } from '../../dtos/delivery/response/get-all-delivery.response.dto';
 
 const statusFilters = ['ALL', ...Object.values(DeliveryStatus)];
 
-function DeliveryListPage() {
+function CustomerDeliveryListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDQ5NzQyOCwiZXhwIjoxNzYwNTMzNDI4fQ.9vcKS3F-U-p5JLGd8-S2ujR8SBgRvrOSdV87BeQ9la4";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNDk3MzcxLCJleHAiOjE3NjA1MzMzNzF9.yvx0M-CwE2Ck9LIgFr1U8FTrG58MsRJbAhsmYn9jTwA";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<GetDeliveryResponseDto | null>(null);
@@ -39,10 +41,15 @@ function DeliveryListPage() {
   useEffect(() => {
     const fetchDeliveries = async () => {
       try {
-        const response = await getAllDelivery(page, size, sort, accessToken);
+        const response = await getMyDelivery(page, size, sort, accessToken);
         if (response.code === "SU" && Array.isArray(response.data?.content)) {
-          setDeliveries(response.data.content);
-          console.log(response.data.content);
+
+          const allDeliveries: GetAllDeliveryResponseDto[] = response.data.content;
+
+          const visibleDeliveries = allDeliveries.filter(delivery => !delivery.isHidden);
+
+          setDeliveries(visibleDeliveries);
+          console.log(visibleDeliveries);
         } else {
           console.log(response.message);
         }
@@ -69,42 +76,66 @@ function DeliveryListPage() {
     }
   }
 
-  const handleDelete = async () => {
+  const handleIsHidden = async (updatedDelivery: GetDeliveryResponseDto) => {
     if (!selectedDelivery) return;
 
-    const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
-    if (!confirmDelete) return;
+    const dto: UpdateDeliveryIsHiddenRequestDto = {
+      isHidden: updatedDelivery.isHidden,
+    }
 
-    const response = await deleteDelivery(selectedDelivery.id, accessToken);
+    const confirmIsHidden = window.confirm("정말 숨김처리 하시겠습니까?");
+    if (!confirmIsHidden) return;
+
+    const response = await updateDeliveryIsHidden(selectedDelivery.id, dto, accessToken);
 
     if (response.code === "SU") {
-      alert("삭제 완료");
+      alert("숨김처리 완료");
       setDeliveries((prevDeliveries) =>
         prevDeliveries.filter((delivery) => delivery.id !== selectedDelivery.id)
       );
       closeModal();
     } else {
-      alert("삭제 실패: " + response.message);
+      alert('숨김처리 실패: ' + response.message);
       closeModal();
     }
   };
 
-  const handleUpdate = async (updatedDelivery: GetDeliveryResponseDto, changeReason: string) => {
+  const handleUpdate = async (updatedDelivery: GetDeliveryResponseDto) => {
     if (!selectedDelivery) return;
 
-    const dto: UpdateDeliveryStatusRequestDto = {
-      status: updatedDelivery.status,
-      changeReason: changeReason,
+    const dto: UpdateDeliveryRequestDto = {
+      requestDate: updatedDelivery.requestDate,
+      item: updatedDelivery.item,
+      weight: updatedDelivery.weight,
+      message: updatedDelivery.message,
+      collectionSiteId: updatedDelivery.collectionSiteId,
+      recipientName: updatedDelivery.recipientName,
+      recipientPhone: updatedDelivery.recipientPhone,
+      recipientZipcode: updatedDelivery.recipientZipcode,
+      recipientAddress: updatedDelivery.recipientAddress,
+      recipientAddressDetail: updatedDelivery.recipientAddressDetail,
     };
 
     try {
-      const response = await updateDeliveryStatus(selectedDelivery!.id, dto, accessToken);
+      const response = await updateDelivery(selectedDelivery!.id, dto, accessToken);
       if (response.code === "SU") {
-        alert("상태 수정 완료");
+        alert('수정 완료');
         setDeliveries((prevDeliveries) =>
           prevDeliveries.map((delivery) =>
             delivery.id === updatedDelivery.id
-              ? { ...delivery, status: updatedDelivery.status }
+              ? {
+                ...delivery,
+                requestDate: updatedDelivery.requestDate,
+                item: updatedDelivery.item,
+                weight: updatedDelivery.weight,
+                message: updatedDelivery.message,
+                collectionSiteId: updatedDelivery.collectionSiteId,
+                recipientName: updatedDelivery.recipientName,
+                recipientPhone: updatedDelivery.recipientPhone,
+                recipientZipcode: updatedDelivery.recipientZipcode,
+                recipientAddress: updatedDelivery.recipientAddress,
+                recipientAddressDetail: updatedDelivery.recipientAddressDetail
+              }
               : delivery
           )
         );
@@ -122,7 +153,6 @@ function DeliveryListPage() {
       setSelectedStatus(newStatus);
     }
   }
-
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -177,7 +207,6 @@ function DeliveryListPage() {
                     <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
                       <TableRow>
                         <TableCell align='center'>배송 번호</TableCell>
-                        <TableCell align='center'>고객사 번호</TableCell>
                         <TableCell align='center'>수령인</TableCell>
                         <TableCell align='center'>상태</TableCell>
                         <TableCell align='center'>품목</TableCell>
@@ -198,7 +227,6 @@ function DeliveryListPage() {
                         filteredDeliveries.map((delivery) => (
                           <TableRow key={delivery.id} hover>
                             <TableCell align='center'>{delivery.id}</TableCell>
-                            <TableCell align='center'>{delivery.customerId}</TableCell>
                             <TableCell align='center'>{delivery.recipientName}</TableCell>
                             <TableCell align='center'>{delivery.status}</TableCell>
                             <TableCell align='center'>{delivery.item}</TableCell>
@@ -220,11 +248,11 @@ function DeliveryListPage() {
           </>
         )}
         {selectedDelivery && (
-          <DeliveryDetailModal
+          <CustomerDeliveryDetailModal
             isOpen={modalOpen}
             onClose={closeModal}
-            onDelete={handleDelete}
             onUpdate={handleUpdate}
+            onIsHidden={handleIsHidden}
             delivery={selectedDelivery}
           />
         )}
@@ -234,4 +262,4 @@ function DeliveryListPage() {
   )
 }
 
-export default DeliveryListPage
+export default CustomerDeliveryListPage

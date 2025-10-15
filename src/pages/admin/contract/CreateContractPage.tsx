@@ -13,7 +13,7 @@ const customers = [
 
 function CreateContractPage() {
 
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDMyOTUwMCwiZXhwIjoxNzYwMzY1NTAwfQ.4_nCw4WXhX7AWAP3GZMrQMkCidFz4rXGwAKruuzNwnQ";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDQ5NzQyOCwiZXhwIjoxNzYwNTMzNDI4fQ.9vcKS3F-U-p5JLGd8-S2ujR8SBgRvrOSdV87BeQ9la4";
 
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
 
