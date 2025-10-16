@@ -136,6 +136,36 @@ function Sidebar() {
         </List>
 
         <Divider />
+        <ListItem disablePadding>
+          <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/delivery/create'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="배송 신청" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+        <ListItem disablePadding>
+          <Link to="/contracts/me" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/contracts/me'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="고객사 계약 목록" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+        <ListItem disablePadding>
+          <Link to="/deliveries/me" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/deliveries/me'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="고객사 배송 목록" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
         <List>
           <ListItem disablePadding>
             <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
