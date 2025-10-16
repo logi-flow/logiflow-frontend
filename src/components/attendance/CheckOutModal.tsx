@@ -8,7 +8,8 @@ interface Props {
   onConfirm: (vehicleMileage: number) => void;
 }
 
-function CheckOutDialog({ open, loading, onClose, onConfirm }: Props) {
+function CheckOutModal({ open, loading, onClose, onConfirm }: Props) {
+  const [touched, setTouched] = useState(false);
   const [vehicleMileage, setVehicleMileage] = useState<string>("");
   const vehicleMileageNum = Number(vehicleMileage);
   const isVehicleMileageEmpty = vehicleMileage.trim() === "";
@@ -21,6 +22,7 @@ function CheckOutDialog({ open, loading, onClose, onConfirm }: Props) {
   useEffect(() => {
     if (open){
       setVehicleMileage("");
+      setTouched(false);
     }
   }, [open]);
 
@@ -59,9 +61,10 @@ function CheckOutDialog({ open, loading, onClose, onConfirm }: Props) {
                 type="number"
                 inputMode="decimal"
                 value={vehicleMileage}
-                onChange={(e) => setVehicleMileage(e.target.value)}
                 fullWidth
-                error={isVehicleMileageInvalid}
+                onChange={(e) => setVehicleMileage(e.target.value)}
+                onBlur={() => setTouched(true)}
+                error={touched && isVehicleMileageInvalid}
                 helperText={vehicleMileageHelperText}
               />
             </form>
@@ -78,4 +81,4 @@ function CheckOutDialog({ open, loading, onClose, onConfirm }: Props) {
   )
 }
 
-export default CheckOutDialog;
+export default CheckOutModal;

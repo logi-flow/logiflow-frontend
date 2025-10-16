@@ -9,6 +9,8 @@ import MyAttendanceListPage from './pages/attendance/MyAttendanceListPage'
 import CreateContractPage from './pages/admin/contract/CreateContractPage'
 import CreateDeliveryPage from './pages/delivery/CreateDeliveryPage'
 import DeliveryListPage from './pages/admin/delivery/DeliveryListPage'
+import AllAllowanceTypeListPage from './pages/allowanceType/AllAllowanceTypeListPage'
+import AllDeductionTypeListPage from './pages/deductionType/AllDeductionTypeListPage'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -17,7 +19,12 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/contracts" element={<ContractListPage />} />
       <Route path="/contracts/create" element={<CreateContractPage />} />
       <Route path='/deliveries' element={<DeliveryListPage />} />
+    </Routes>
+
+    <Routes>
       <Route path="/attendances/list" element={<AllAttendanceListPage />} />
+      <Route path="/allowanceTypes/list" element={<AllAllowanceTypeListPage />} />
+      <Route path="/deductionTypes/list" element={<AllDeductionTypeListPage />} />
     </Routes>
 
     <Routes>

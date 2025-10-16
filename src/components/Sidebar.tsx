@@ -72,6 +72,10 @@ function Sidebar() {
           </ListItem>
           {/* 항목 추가 여기 */}
 
+        </List>
+
+        <Divider />
+        <List>
           <ListItem disablePadding>
             <Link to="/attendances/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
               <ListItemButton selected={currentPath === '/attendances/list'}>
@@ -79,6 +83,28 @@ function Sidebar() {
                   <ArticleIcon />
                 </ListItemIcon>
                 <ListItemText primary="기사 출근부 조회" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/allowanceTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/allowanceTypes/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="수당 항목 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/deductionTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/deductionTypes/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="공제 항목 관리" />
               </ListItemButton>
             </Link>
           </ListItem>

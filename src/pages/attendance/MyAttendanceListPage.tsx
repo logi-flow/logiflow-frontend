@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, Pagination, TableRow, Typography, CircularProgress, Toolbar } from "@mui/material";
-import EditDocumentIcon from '@mui/icons-material/EditNote';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useEffect, useState, type ChangeEvent } from "react";
 // import { useCookies } from "react-cookie";
 import { getAllMyAttendance, getAttendanceDetail } from "../../apis/attendance/attendance.apis";
@@ -30,7 +30,7 @@ function MyAttendanceListPage() {
     hasPrevious: false,
     sort: 'desc',
   });
-  const [modal, setModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [selectedAttendance, setSelectedAttendance] = useState<GetAttendanceDetailResponseDto>();
   const size = 20;
   const sort = "desc";
@@ -54,11 +54,11 @@ function MyAttendanceListPage() {
         setPageData(data);
       } else {
         console.error("출근부 조회 실패: ", message);
-        alert("출근부 조회 실패");
+        alert("출근부 조회 실패: " + message);
       }
     } catch (e) {
       console.error("출근부 조회 중 에러 발생: ", e);
-      alert("출근부 조회 요청 중 문제 발생");
+      alert("출근부 조회 중 에러 발생: " + e);
     } finally {
       setListLoading(false);
     }
@@ -76,7 +76,7 @@ function MyAttendanceListPage() {
   const handleDetail = async (attendanceId: number) => {
     if (!accessToken || detailLoading) return;
 
-    setModal(true);
+    setOpenModal(true);
     setSelectedAttendance(undefined);
         
     try {
@@ -89,17 +89,17 @@ function MyAttendanceListPage() {
         setSelectedAttendance(data);
       } else {
         console.error("출근부 상세 조회 실패: ", message);
-        alert("출근부 상세 조회 실패");
+        alert("출근부 상세 조회 실패: " + message);
       }
     } catch (e) {
       console.error("출근부 상세 조회 중 에러 발생: ", e);
-      alert("출근부 상세 조회 요청 중 문제 발생");
+      alert("출근부 상세 조회 중 에러 발생: " + e);
     } finally {
       setDetailLoading(false);
     }
   };
 
-  const handleModalClose = () => setModal(false);
+  const handleModalClose = () => setOpenModal(false);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -164,7 +164,7 @@ function MyAttendanceListPage() {
                         <TableCell align="center">{row.workEnd}</TableCell>
                         <TableCell align="center">
                           <IconButton onClick={() => handleDetail(row.id)}>
-                            <EditDocumentIcon />
+                            <EditNoteIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -192,7 +192,7 @@ function MyAttendanceListPage() {
 
         <AttendanceDetailModal
           attendance={selectedAttendance}
-          open={modal}
+          open={openModal}
           loading={detailLoading}
           onClose={handleModalClose}
         />

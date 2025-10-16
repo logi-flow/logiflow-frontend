@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react';
 // import { useCookies } from 'react-cookie';
 import { checkInAttendance, checkOutAttendance, getMyAttendance } from '../../apis/attendance/attendance.apis';
 import type { GetMyAttendanceDetailResponseDto } from '../../dtos/attendance/response/get-my-attendance-detail.response.dto';
@@ -13,15 +13,13 @@ function AttendanceRegisterPage() {
   const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkcml2ZXIwMDMiLCJyb2xlIjoiRFJJVkVSIiwiaWF0IjoxNzYwMzI5NTM1LCJleHAiOjE3NjAzNjU1MzV9.UoHQTgtiClYDeQjAijgby_yefknx4uVOIJG8fkuvikk";
   const [status, setStatus] = useState<GetMyAttendanceDetailResponseDto>();
   const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [buttonEnable, setButtonEnable] = useState(true);
   const isOpen = useMemo(() => status?.open, [status]);
   const buttonName = isOpen ? "퇴근" : "출근";
   
   useEffect(() => {
-    if (accessToken) {
-      fetchMyAttendanceStatus();
-    }
+    fetchMyAttendanceStatus();
   }, [accessToken]);
 
   const fetchMyAttendanceStatus = async () => {
@@ -37,11 +35,11 @@ function AttendanceRegisterPage() {
         setStatus(data);
       } else {
         console.error("당일 출근부 조회 실패: ", message);
-        alert("당일 출근부 조회 실패");
+        alert("당일 출근부 조회 실패: " + message);
       }
     } catch (e) {
       console.error("당일 출근부 조회 중 에러 발생: ", e);
-      alert("당일 출근부 조회 요청 중 문제 발생");
+      alert("당일 출근부 조회 중 에러 발생: " + e);
     } finally {
       setLoading(false);
     }
@@ -60,11 +58,11 @@ function AttendanceRegisterPage() {
         setStatus(data);
       } else {
         console.error("출근 처리 실패: ", message);
-        alert("출근 처리 실패");
+        alert("출근 처리 실패: " + message);
       }
     } catch (e) {
       console.error("출근 처리 중 에러 발생: ", e);
-      alert("출근 처리 요청 중 문제 발생");
+      alert("출근 처리 중 에러 발생: " + e);
     } finally {
       setLoading(false);
     }
@@ -82,22 +80,22 @@ function AttendanceRegisterPage() {
       
       if (code === "SU" && data) {
         setStatus(data);
-        setModal(false);
+        setOpenModal(false);
         setButtonEnable(false);
       } else {
         console.error("퇴근 처리 실패: ", message);
-        alert("퇴근 처리 실패");
+        alert("퇴근 처리 실패: " + message);
       }
     } catch (e) {
       console.error("퇴근 처리 중 에러 발생: ", e);
-      alert("퇴근 처리 요청 중 문제 발생");
+      alert("퇴근 처리 중 에러 발생: " + e);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleModalOpen = () => setModal(true);
-  const handleModalClose = () => setModal(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -117,7 +115,7 @@ function AttendanceRegisterPage() {
               <Stack direction="row" justifyContent="space-between">
                 <CircularProgress color="inherit" size={28} sx={{ mx: 'auto' }}/>
               </Stack>
-            ) : (
+            ) : status ? (
               <Stack spacing={2} >
                 <Stack direction="row" justifyContent="space-between">
                   <Typography variant="body2">
@@ -146,24 +144,28 @@ function AttendanceRegisterPage() {
                   </Typography>
                 </Stack>
               </Stack>
+            ) : (
+              <Typography>당일 출근 내역을 불러올 수 없습니다.</Typography>
             )}
           </Card>
           <CardActions sx={{ p: 0 }}>
-            <Button
-              variant="contained"
-              size="large"
-              fullWidth
-              disabled={!buttonEnable || modal || loading}
-              color={isOpen ? "error" : "success"}
-              onClick={isOpen ? handleModalOpen : handleCheckIn}
-            >
-              {buttonName}
-            </Button>
+            {status && (
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={!buttonEnable || openModal || loading}
+                color={isOpen ? "error" : "success"}
+                onClick={isOpen ? handleModalOpen : handleCheckIn}
+              >
+                {buttonName}
+              </Button>
+            )}
           </CardActions>
         </Stack>
 
         <CheckOutModal
-          open={modal}
+          open={openModal}
           loading={loading}
           onClose={handleModalClose}
           onConfirm={handleCheckOut}
