@@ -1,5 +1,6 @@
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material'
-import type { GetAttendanceDetailResponseDto } from '../../dtos/attendance/response/get-attendance-detail.response.dto'
+import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Stack, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import type { GetAttendanceDetailResponseDto } from '../../dtos/attendance/response/get-attendance-detail.response.dto';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
   attendance: GetAttendanceDetailResponseDto | undefined;
@@ -8,19 +9,29 @@ interface Props {
   onClose: () => void;
 }
 
-function AttendanceDetailDialog({ attendance, open, loading, onClose }: Props) {
+function AttendanceDetailModal({ attendance, open, loading, onClose }: Props) {
   const isOpen = attendance?.openFlag;
+
+  const handleClose = (_: object, reason?: 'backdropClick' | 'escapeKeyDown') => {
+    if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+    onClose();
+  };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="md"
       fullWidth
       disableRestoreFocus
     >
       <DialogTitle>
-        출 · 퇴근 기록 상세 조회
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          출 · 퇴근 기록 상세 조회
+          <IconButton onClick={handleClose}>
+            <CloseIcon sx={{ fontSize: 30 }} />
+          </IconButton>
+        </Stack>
       </DialogTitle>
 
       <DialogContent dividers>
@@ -89,14 +100,8 @@ function AttendanceDetailDialog({ attendance, open, loading, onClose }: Props) {
           <Typography>상세 정보를 불러올 수 없습니다.</Typography>
         )}
       </DialogContent>
-      
-      <DialogActions>
-        <Button onClick={onClose} variant="contained">
-          닫기
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
 
-export default AttendanceDetailDialog;
+export default AttendanceDetailModal;
