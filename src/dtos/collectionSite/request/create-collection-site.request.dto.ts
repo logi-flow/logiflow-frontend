@@ -1,4 +1,4 @@
-export interface CreateCollectionStieRequestDto {
+export interface CreateCollectionSiteRequestDto {
   name: string;
   zipCode: string;
   phoneNumber: string;

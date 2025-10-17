@@ -3,13 +3,16 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
 import type { GetDeliveryResponseDto } from '../../dtos/delivery/response/get-delivery.response.dto';
-import { getDeliveryDetail, getMyDelivery, updateDelivery, updateDeliveryIsHidden } from '../../apis/delivery/delivery.apis';
+import { cancelDelivery, getDeliveryDetail, getMyDelivery, updateDelivery, updateDeliveryIsHidden } from '../../apis/delivery/delivery.apis';
 import type { UpdateDeliveryIsHiddenRequestDto } from '../../dtos/delivery/request/update-delivery-is-hidden.request.dto';
 import type { UpdateDeliveryRequestDto } from '../../dtos/delivery/request/update-delivery.request.dto';
 import { DeliveryStatus } from '../../enums/delivery-status.enum';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import CustomerDeliveryDetailModal from '../../components/delivery/CustomerDeliveryDetailModal';
-import type { GetAllDeliveryResponseDto } from '../../dtos/delivery/response/get-all-delivery.response.dto';
+import type { GetAllCollectionSiteResponseDto } from '../../dtos/collectionSite/response/get-all-collection-site.response.dto';
+import { getAllCollectionSite } from '../../apis/collectionSite/collection-site.api';
+import type { UpdateDeliveryStatusRequestDto } from '../../dtos/delivery/request/update-delivery-status.request.dto';
+
 
 const statusFilters = ['ALL', ...Object.values(DeliveryStatus)];
 
@@ -17,12 +20,14 @@ function CustomerDeliveryListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNDk3MzcxLCJleHAiOjE3NjA1MzMzNzF9.yvx0M-CwE2Ck9LIgFr1U8FTrG58MsRJbAhsmYn9jTwA";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNjY5MjM3LCJleHAiOjE3NjA3MDUyMzd9.iDsXnTJp3rdEEPiT65tX6AbQp_0uxAVdBall5O4f0eo";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<GetDeliveryResponseDto | null>(null);
 
   const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [collectionSites, setCollectionSites] = useState<GetAllCollectionSiteResponseDto[]>([]);
+
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
   const [loading, setLoading] = useState(true);
@@ -38,28 +43,38 @@ function CustomerDeliveryListPage() {
     setSelectedDelivery(null);
   }
 
-  useEffect(() => {
-    const fetchDeliveries = async () => {
-      try {
-        const response = await getMyDelivery(page, size, sort, accessToken);
-        if (response.code === "SU" && Array.isArray(response.data?.content)) {
+  const fetchData = async () => {
+    try {
+      const [deliveryResponse, siteResponse] = await Promise.all([
+        getMyDelivery(page, size, sort, accessToken),
+        getAllCollectionSite(page, size, sort, accessToken)
+      ]);
 
-          const allDeliveries: GetAllDeliveryResponseDto[] = response.data.content;
+      if (deliveryResponse.code === "SU" && Array.isArray(deliveryResponse.data?.content)) {
 
-          const visibleDeliveries = allDeliveries.filter(delivery => !delivery.isHidden);
-
-          setDeliveries(visibleDeliveries);
-          console.log(visibleDeliveries);
-        } else {
-          console.log(response.message);
-        }
-      } catch (err) {
-        console.log("err: ", err);
-      } finally {
-        setLoading(false);
+        const visibleDeliveries = deliveryResponse.data.content.filter(delivery => !delivery.isHidden);
+        setDeliveries(visibleDeliveries);
+        console.log(visibleDeliveries);
+      } else {
+        console.log(deliveryResponse.message);
       }
+
+      if (siteResponse.code === "SU" && Array.isArray(siteResponse.data?.content)) {
+        setCollectionSites(siteResponse.data.content);
+      } else {
+        setError("수거지 목록 불러오기 실패");
+        console.log(siteResponse.message);
+      }
+
+    } catch (err) {
+      console.log("err: ", err);
+    } finally {
+      setLoading(false);
     }
-    fetchDeliveries();
+  }
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const openModalWithDeliveryId = async (id: number) => {
@@ -97,6 +112,36 @@ function CustomerDeliveryListPage() {
     } else {
       alert('숨김처리 실패: ' + response.message);
       closeModal();
+    }
+  };
+
+
+  const handleCancelDelivery = async (deliveryId: number, reason: string) => {
+    if (!reason.trim()) {
+      alert('취소 사유를 반드시 입력');
+      return;
+    }
+
+    const confirmCancel = window.confirm('정말 배송 요청을 취소 하시겠습니까?');
+    if (!confirmCancel) return;
+
+    const dto: UpdateDeliveryStatusRequestDto = {
+      status: DeliveryStatus.CANCELLED,
+      changeReason: reason,
+    };
+
+    try {
+      const response = await cancelDelivery(deliveryId, dto, accessToken);
+      if (response.code === "SU") {
+        alert('배송 요청이 성공적으로 취소되었습니다.');
+        await fetchData();
+        closeModal();
+      } else {
+        alert(`취소 실패: ${response.message}`);
+      }
+    } catch (err) {
+      console.log(err);
+      alert('처리 중 오류 발생');
     }
   };
 
@@ -152,7 +197,8 @@ function CustomerDeliveryListPage() {
     if (newStatus !== null) {
       setSelectedStatus(newStatus);
     }
-  }
+  };
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -177,7 +223,7 @@ function CustomerDeliveryListPage() {
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: ' center', mb: 2 }}>
               <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }}>
-                배송 목록
+                배송 목록(고객사)
               </Typography>
 
               <ToggleButtonGroup
@@ -254,6 +300,8 @@ function CustomerDeliveryListPage() {
             onUpdate={handleUpdate}
             onIsHidden={handleIsHidden}
             delivery={selectedDelivery}
+            collectionSites={collectionSites}
+            onCancel={handleCancelDelivery}
           />
         )}
 
