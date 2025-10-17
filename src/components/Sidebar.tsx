@@ -109,7 +109,7 @@ function Sidebar() {
             </Link>
           </ListItem>
         </List>
-        
+
         <Divider />
         <List>
           <ListItem disablePadding>
@@ -167,7 +167,7 @@ function Sidebar() {
           </Link>
         </ListItem>
         <List>
-          <ListItem disablePadding>
+          {/* <ListItem disablePadding>
             <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
               <ListItemButton>
                 <ListItemIcon>
@@ -176,7 +176,7 @@ function Sidebar() {
                 <ListItemText primary="배송 신청" />
               </ListItemButton>
             </Link>
-          </ListItem>
+          </ListItem> */}
         </List>
       </Box>
     </Drawer>

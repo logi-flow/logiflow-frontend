@@ -15,7 +15,7 @@ function DeliveryListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDQ5NzQyOCwiZXhwIjoxNzYwNTMzNDI4fQ.9vcKS3F-U-p5JLGd8-S2ujR8SBgRvrOSdV87BeQ9la4";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDY2OTI4MSwiZXhwIjoxNzYwNzA1MjgxfQ.qXBKGcdS8cAVGSuLhEo3t1Bsar7OngWvWQlxzjOxY4o";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<GetDeliveryResponseDto | null>(null);
@@ -147,7 +147,7 @@ function DeliveryListPage() {
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: ' center', mb: 2 }}>
               <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }}>
-                배송 목록
+                배송 목록(관리자)
               </Typography>
 
               <ToggleButtonGroup

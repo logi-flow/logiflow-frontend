@@ -15,7 +15,7 @@ function CustomerContractListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNDk3MzcxLCJleHAiOjE3NjA1MzMzNzF9.yvx0M-CwE2Ck9LIgFr1U8FTrG58MsRJbAhsmYn9jTwA";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNjY5MjM3LCJleHAiOjE3NjA3MDUyMzd9.iDsXnTJp3rdEEPiT65tX6AbQp_0uxAVdBall5O4f0eo";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<GetContractResponseDto | null>(null);
@@ -134,7 +134,7 @@ function CustomerContractListPage() {
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: ' center', mb: 2 }}>
               <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }}>
-                계약 목록
+                계약 목록(고객사)
               </Typography>
               <ToggleButtonGroup
                 color='primary'
