@@ -15,12 +15,12 @@ import UpdateAllowanceTypeModal from "../../components/allowanceType/UpdateAllow
 import type { UpdateAllowanceTypeRequestDto } from "../../dtos/allowanceType/request/update-allowance-type.request.dto";
 import { getAllowanceTypeUpdateLogs } from "../../apis/allowanceType/allowance-type-log.apis";
 import type { GetAllowanceTypeUpdateLogResponseDto } from "../../dtos/allowanceTypeLog/response/get-allowance-type-update-log.response.dto";
-import AllowanceTypeUpdateLogsModal from "../../components/allowanceType/AllowanceTypeUpdateLogsModal";
+import AllowanceTypeLogsModal from "../../components/allowanceTypeLog/AllowanceTypeLogsModal";
 
 function AllAllowanceTypeListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDYxODg0NiwiZXhwIjoxNzYwNjU0ODQ2fQ.AdeADoxhUp79ngGMcUnYiH-Vv8wvuKPw1iEM8Fu5YE8";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDc4MzgyOSwiZXhwIjoxNzYwODE5ODI5fQ.1BSTVpRVaW8C7G0rNUkSMbSih6Tk5y-YwDGEZLk_xAg";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -233,7 +233,7 @@ function AllAllowanceTypeListPage() {
     setPage(newPage - 1);
   };
 
-  const handleEditForm = () => {
+  const handleUpdateModalOpen = () => {
     setOpenDetailModal(false);
     setTimeout(() => setOpenUpdateModal(true), 0);
   };
@@ -337,7 +337,7 @@ function AllAllowanceTypeListPage() {
 
         <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
           <Button variant="outlined" onClick={handleLog}>
-              수정 이력 보기
+              수정 이력 조회
             </Button>
         </Stack>
 
@@ -367,7 +367,7 @@ function AllAllowanceTypeListPage() {
           open={openDetailModal}
           loading={detailLoading}
           onClose={handleDetailModalClose}
-          onEdit={handleEditForm}
+          onEdit={handleUpdateModalOpen}
           onDelete={handleDelete}
         />
 
@@ -379,7 +379,7 @@ function AllAllowanceTypeListPage() {
           onConfirm={handleUpdate}
         />
 
-        <AllowanceTypeUpdateLogsModal 
+        <AllowanceTypeLogsModal 
           log={logData}
           open={openUpdateLogModal}
           loading={logLoading}

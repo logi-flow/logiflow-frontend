@@ -1,3 +1,4 @@
+import type { DriverDistrict } from "../../../enums/driver-district.enum";
 import type { DriverPayrollStatus } from "../../../enums/driver-payroll-status.enum";
 import type { AllowanceItemDto } from "./allowance-item.dto";
 import type { DeductionItemDto } from "./deduction-item.dto";
@@ -6,6 +7,12 @@ export interface GetDriverPayrollDetailResponseDto {
   id: number;
   driverId: number;
   driverName: string;
+  driverUsername: string;
+  driverPhoneNumber: string;
+  driverEmail: string;
+  driverDistrict: DriverDistrict;
+  driverPay: number | null;
+  driverCompanyJoin: string;
   title?: string;
   periodStartDate: string;
   periodEndDate: string;

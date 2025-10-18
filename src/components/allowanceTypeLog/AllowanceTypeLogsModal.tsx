@@ -1,11 +1,11 @@
 import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import type { GetAllowanceTypeUpdateLogResponseDto } from "../../dtos/allowanceTypeLog/response/get-allowance-type-update-log.response.dto";
 import CloseIcon from '@mui/icons-material/Close';
 import type PageDto from "../../dtos/page.dto";
 import { type ChangeEvent } from "react";
-import type { GetDeductionTypeUpdateLogResponseDto } from "../../dtos/deductionTypeLog/response/get-deduction-type-update-log.response.dto";
 
 interface Props {
-  log: PageDto<GetDeductionTypeUpdateLogResponseDto>;
+  log: PageDto<GetAllowanceTypeUpdateLogResponseDto>;
   open: boolean;
   loading: boolean;
   onClose: () => void;
@@ -18,7 +18,7 @@ const logNameMap: Record<string, string> = {
   is_active: "사용 여부"
 }
 
-function DeductionTypeUpdateLogsModal({log, open, loading, onClose, onChangePage }: Props) {
+function AllowanceTypeLogsModal({log, open, loading, onClose, onChangePage }: Props) {
   const size = 20;
   const sort = "desc";
 
@@ -73,7 +73,7 @@ function DeductionTypeUpdateLogsModal({log, open, loading, onClose, onChangePage
                   </TableHead>
 
                   <TableBody>
-                    {!loading && log.totalElements <= 0 && (
+                    {log.totalElements <= 0 && (
                       <TableRow>
                         <TableCell colSpan={7} align="center">
                           조회 결과가 없습니다.
@@ -81,7 +81,7 @@ function DeductionTypeUpdateLogsModal({log, open, loading, onClose, onChangePage
                       </TableRow>
                     )}
 
-                    {!loading && log.content.map((row, index) => {
+                    {log.content.map((row, index) => {
                       return (
                         <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
                           <TableCell align="center">{log.number * size + index + 1}</TableCell>
@@ -115,7 +115,7 @@ function DeductionTypeUpdateLogsModal({log, open, loading, onClose, onChangePage
           <Typography>이력 내역을 불러올 수 없습니다.</Typography>
         )}
 
-        {!loading && log.totalPages > 0 && (
+        {log.totalPages > 0 && (
           <Stack sx={{ mt: 3 }} spacing={2} alignItems="center">
             <Pagination
               count={log.totalPages}
@@ -133,4 +133,4 @@ function DeductionTypeUpdateLogsModal({log, open, loading, onClose, onChangePage
   )
 }
 
-export default DeductionTypeUpdateLogsModal;
+export default AllowanceTypeLogsModal;
