@@ -109,7 +109,7 @@ function MyAttendanceListPage() {
         <Toolbar />
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h6" fontWeight={700}>
-            내 출근부 조회
+            출근부 조회
           </Typography>
         </Stack>
 

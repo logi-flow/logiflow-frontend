@@ -108,6 +108,17 @@ function Sidebar() {
               </ListItemButton>
             </Link>
           </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/payrolls/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/payrolls/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="기사 급여 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
         </List>
 
         <Divider />
@@ -129,7 +140,18 @@ function Sidebar() {
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
-                <ListItemText primary="내 출근부 조회" />
+                <ListItemText primary="출근부 조회" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/payrolls/me/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/payrolls/me/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="급여대장 조회" />
               </ListItemButton>
             </Link>
           </ListItem>

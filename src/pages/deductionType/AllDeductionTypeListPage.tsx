@@ -15,12 +15,12 @@ import type { UpdateDeductionTypeRequestDto } from "../../dtos/deductionType/req
 import CreateDeductionTypeModal from "../../components/deductionType/CreateDeductionTypeModal";
 import DeductionTypeDetailModal from "../../components/deductionType/DeductionTypeDetailModal";
 import UpdateDeductionTypeModal from "../../components/deductionType/UpdateDeductionTypeModal";
-import DeductionTypeUpdateLogsModal from "../../components/deductionType/DeductionTypeUpdateLogsModal";
+import DeductionTypeLogsModal from "../../components/deductionTypeLog/DeductionTypeLogsModal";
 
 function AllDeductionTypeListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDYxODg0NiwiZXhwIjoxNzYwNjU0ODQ2fQ.AdeADoxhUp79ngGMcUnYiH-Vv8wvuKPw1iEM8Fu5YE8";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDcwMjE3MSwiZXhwIjoxNzYwNzM4MTcxfQ.szaHzRSOCgeSLUizx1y5DYKs3OrTSD62UntvS9fLbHo";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -233,7 +233,7 @@ function AllDeductionTypeListPage() {
     setPage(newPage - 1);
   };
 
-  const handleEditForm = () => {
+  const handleUpdateModalOpen = () => {
     setOpenDetailModal(false);
     setTimeout(() => setOpenUpdateModal(true), 0);
   };
@@ -337,7 +337,7 @@ function AllDeductionTypeListPage() {
 
         <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
           <Button variant="outlined" onClick={handleLog}>
-              수정 이력 보기
+              수정 이력 조회
             </Button>
         </Stack>
 
@@ -367,7 +367,7 @@ function AllDeductionTypeListPage() {
           open={openDetailModal}
           loading={detailLoading}
           onClose={handleDetailModalClose}
-          onEdit={handleEditForm}
+          onEdit={handleUpdateModalOpen}
           onDelete={handleDelete}
         />
 
@@ -379,7 +379,7 @@ function AllDeductionTypeListPage() {
           onConfirm={handleUpdate}
         />
 
-        <DeductionTypeUpdateLogsModal 
+        <DeductionTypeLogsModal 
           log={logData}
           open={openUpdateLogModal}
           loading={logLoading}

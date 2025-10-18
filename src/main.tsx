@@ -13,6 +13,8 @@ import AllAllowanceTypeListPage from './pages/allowanceType/AllAllowanceTypeList
 import AllDeductionTypeListPage from './pages/deductionType/AllDeductionTypeListPage'
 import CustomerContractListPage from './pages/contract/CustomerContractListPage'
 import CustomerDeliveryListPage from './pages/delivery/CustomerDeliveryListPage'
+import AllDriverPayrollListPage from './pages/driverPayroll/AllDriverPayrollListPage'
+import MyDriverPayrollListPage from './pages/driverPayroll/MyDriverPayrollListPage'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -27,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/attendances/list" element={<AllAttendanceListPage />} />
       <Route path="/allowanceTypes/list" element={<AllAllowanceTypeListPage />} />
       <Route path="/deductionTypes/list" element={<AllDeductionTypeListPage />} />
+      <Route path="/payrolls/list" element={<AllDriverPayrollListPage />} />
     </Routes>
 
     <Routes>
@@ -38,6 +41,7 @@ createRoot(document.getElementById('root')!).render(
     <Routes>
       <Route path="/attendances/me/register" element={<AttendanceRegisterPage />} />
       <Route path="/attendances/me/list" element={<MyAttendanceListPage />} />
+      <Route path="/payrolls/me/list" element={<MyDriverPayrollListPage />} />
     </Routes>
   </BrowserRouter>,
 )

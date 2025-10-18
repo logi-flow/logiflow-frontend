@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import ConfirmModal from "../ConfirmModal";
 import { useState } from "react";
@@ -61,47 +61,55 @@ function DeductionTypeDetailModal({ deductionType, open, loading, onClose, onEdi
           </Stack>
         ) : deductionType ? (
           <Stack spacing={2}>
-            <Table size="medium">
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
-                    공제 항목 정보
-                  </TableCell>
-                </TableRow>
+            <TableContainer component={Paper} elevation={0}>
+              <Table size="medium">
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
+                      공제 항목 정보
+                    </TableCell>
+                  </TableRow>
 
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>코드명</TableCell>
-                  <TableCell>{deductionType.code}</TableCell>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>항목명</TableCell>
-                  <TableCell>{deductionType.name}</TableCell>
-                </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>코드명</TableCell>
+                    <TableCell>{deductionType.code}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>항목명</TableCell>
+                    <TableCell>{deductionType.name}</TableCell>
+                  </TableRow>
 
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>사용 여부</TableCell>
-                  <TableCell>{isActive ? "사용" : "미사용"}</TableCell>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>사용 여부</TableCell>
+                    <TableCell>{isActive ? "사용" : "미사용"}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
 
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>설명</TableCell>
-                  <TableCell colSpan={3}>{deductionType.description}</TableCell>
-                </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>설명</TableCell>
+                    <TableCell colSpan={3}>{deductionType.description}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-                <TableRow>
-                  <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
-                    입력 정보
-                  </TableCell>
-                </TableRow>
+            <TableContainer component={Paper} elevation={0}>
+              <Table size="medium">
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
+                      입력 정보
+                    </TableCell>
+                  </TableRow>
 
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>등록일</TableCell>
-                  <TableCell>{deductionType.createdAt}</TableCell>
-                  <TableCell sx={{ fontWeight: 600, width: '30%' }}>수정일</TableCell>
-                  <TableCell>{deductionType.updatedAt}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>등록일</TableCell>
+                    <TableCell>{deductionType.createdAt}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>수정일</TableCell>
+                    <TableCell>{deductionType.updatedAt}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Stack>
         ) : (
           <Typography>상세 정보를 불러올 수 없습니다.</Typography>
@@ -109,10 +117,10 @@ function DeductionTypeDetailModal({ deductionType, open, loading, onClose, onEdi
       </DialogContent>
       
       <DialogActions>
-        <Button onClick={onEdit} variant="contained">
+        <Button onClick={onEdit} variant="contained" disabled={loading || !deductionType}>
           수정
         </Button>
-        <Button onClick={handleDelete} variant="contained" color="error">
+        <Button onClick={handleDelete} variant="contained" color="error" disabled={loading || !deductionType}>
           삭제
         </Button>
       </DialogActions>
