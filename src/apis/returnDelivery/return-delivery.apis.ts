@@ -44,7 +44,7 @@ export const createReturnDelivery = async (
   }
 };
 
-export const getAllAllowanceType = async (
+export const getAllReturnDelivery = async (
   page: number,
   size: number,
   sort: string,
@@ -130,7 +130,7 @@ export const updteReturnDelivery = async (
   }
 };
 
-export const updteReturnDeliveryStatus = async (
+export const updateReturnDeliveryStatus = async (
   returnDeliveryId: number,
   dto: UpdateReturnDeliveryStatusRequestDto,
   accessToken: string
@@ -181,7 +181,7 @@ export const updteReturnDeliveryIsHidden = async (
   }
 };
 
-export const DeleteReturnDelivery = async (
+export const deleteReturnDelivery = async (
   returnDeliveryId: number,
   accessToken: string
 ): Promise<ResponseDto<void>> => {
