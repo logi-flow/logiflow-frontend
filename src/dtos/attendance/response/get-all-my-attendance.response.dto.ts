@@ -1,4 +1,5 @@
 export interface GetAllMyAttendanceResponseDto {
+  id: number;
   workStart: string;
   workEnd: string;
   

@@ -1,6 +1,4 @@
-import type { DeliveryStatus } from "../../../enums/delivery-status.enum";
-
 export interface UpdateReturnDeliveryStatusRequestDto {
-  status: DeliveryStatus;
+  status: string;
   changeReason: string;
 }

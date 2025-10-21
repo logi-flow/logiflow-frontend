@@ -13,6 +13,7 @@ export interface GetDeliveryResponseDto {
   pickupZipcode: string;
   pickupAddress: string;
   pickupAddressDetail: string;
+  collectionSiteId: number;
   recipientName: string;
   recipientPhone: string;
   recipientZipcode: string;

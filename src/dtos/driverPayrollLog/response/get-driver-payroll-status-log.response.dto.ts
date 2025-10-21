@@ -5,8 +5,8 @@ export interface GetDriverPayrollStatusLogResponseDto {
   driverId: number;
   driverName: string;
   payrollId: number;
-  prevData: DriverPayrollStatus;
-  newData: DriverPayrollStatus;
+  prevStatus: DriverPayrollStatus;
+  newStatus: DriverPayrollStatus;
   changedByUsername: string;
   changeReason: string;
 

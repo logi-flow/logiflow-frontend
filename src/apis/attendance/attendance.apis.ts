@@ -1,6 +1,4 @@
 import type { AxiosError } from "axios";
-import type { CreateAttendanceResponseDto } from "../../dtos/attendance/response/create-attendance.response.dto";
-import type { UpdateAttendanceResponseDto } from "../../dtos/attendance/response/update-attendance.response.dto";
 import type { UpdateAttendanceRequestDto } from "../../dtos/attendance/request/update-attendance.request.dto";
 import type { GetAllAttendanceResponseDto } from "../../dtos/attendance/response/get-all-attendance.response.dto";
 import type { GetAttendanceDetailResponseDto } from "../../dtos/attendance/response/get-attendance-detail.response.dto";
@@ -13,7 +11,7 @@ import { CHECK_IN_ATTENDANCE_URL, CHECK_OUT_ATTENDANCE_URL, GET_ALL_ATTENDANCE_U
 
 export const checkInAttendance = async (
   accessToken: string
-): Promise<ResponseDto<CreateAttendanceResponseDto>> => {
+): Promise<ResponseDto<GetMyAttendanceDetailResponseDto>> => {
   try {
     const response = await axiosInstance.post(
       CHECK_IN_ATTENDANCE_URL,
@@ -29,7 +27,7 @@ export const checkInAttendance = async (
 export const checkOutAttendance = async (
   dto: UpdateAttendanceRequestDto,
   accessToken: string
-): Promise<ResponseDto<UpdateAttendanceResponseDto>> => {
+): Promise<ResponseDto<GetMyAttendanceDetailResponseDto>> => {
   try {
     const response = await axiosInstance.put(
       CHECK_OUT_ATTENDANCE_URL,
