@@ -72,6 +72,10 @@ function Sidebar() {
           </ListItem>
           {/* 항목 추가 여기 */}
 
+        </List>
+
+        <Divider />
+        <List>
           <ListItem disablePadding>
             <Link to="/return-deliveries" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
               <ListItemButton selected={currentPath === '/returnDeliveries'}>
@@ -93,8 +97,41 @@ function Sidebar() {
               </ListItemButton>
             </Link>
           </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/allowanceTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/allowanceTypes/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="수당 항목 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/deductionTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/deductionTypes/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="공제 항목 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/payrolls/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/payrolls/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="기사 급여 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
         </List>
-        
+
         <Divider />
         <List>
           <ListItem disablePadding>
@@ -114,15 +151,56 @@ function Sidebar() {
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
-                <ListItemText primary="내 출근부 조회" />
+                <ListItemText primary="출근부 조회" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/payrolls/me/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/payrolls/me/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="급여대장 조회" />
               </ListItemButton>
             </Link>
           </ListItem>
         </List>
 
         <Divider />
+        <ListItem disablePadding>
+          <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/delivery/create'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="배송 신청" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+        <ListItem disablePadding>
+          <Link to="/contracts/me" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/contracts/me'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="고객사 계약 목록" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+        <ListItem disablePadding>
+          <Link to="/deliveries/me" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/deliveries/me'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="고객사 배송 목록" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
         <List>
-          <ListItem disablePadding>
+          {/* <ListItem disablePadding>
             <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
               <ListItemButton>
                 <ListItemIcon>
@@ -131,7 +209,7 @@ function Sidebar() {
                 <ListItemText primary="배송 신청" />
               </ListItemButton>
             </Link>
-          </ListItem>
+          </ListItem> */}
         </List>
       </Box>
     </Drawer>

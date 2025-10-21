@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, Pagination, TableRow, Typography, CircularProgress, Toolbar } from "@mui/material";
-import EditDocumentIcon from '@mui/icons-material/EditNote';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useEffect, useState, type ChangeEvent } from "react";
 // import { useCookies } from "react-cookie";
 import { getAllAttendance, getAttendanceDetail } from "../../apis/attendance/attendance.apis";
@@ -13,7 +13,7 @@ import Sidebar from "../../components/Sidebar";
 function AllAttendanceListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDMzMTA1OCwiZXhwIjoxNzYwMzY3MDU4fQ.NaFbl-BqBa7YIw1RClbSoCwDtf1Tnl-uxa16-G4vGHE";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDc4MzgyOSwiZXhwIjoxNzYwODE5ODI5fQ.1BSTVpRVaW8C7G0rNUkSMbSih6Tk5y-YwDGEZLk_xAg";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -30,7 +30,7 @@ function AllAttendanceListPage() {
     hasPrevious: false,
     sort: 'desc',
   });
-  const [modal, setModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [selectedAttendance, setSelectedAttendance] = useState<GetAttendanceDetailResponseDto>();
   const size = 20;
   const sort = "desc";
@@ -54,11 +54,11 @@ function AllAttendanceListPage() {
         setPageData(data);
       } else {
         console.error("출근부 전체 조회 실패: ", message);
-        alert("출근부 전체 조회 실패");
+        alert("출근부 전체 조회 실패: " + message);
       }
     } catch (e) {
       console.error("출근부 전체 조회 중 에러 발생: ", e);
-      alert("출근부 전체 조회 요청 중 문제 발생");
+      alert("출근부 전체 조회 중 에러 발생: " + e);
     } finally {
       setListLoading(false);
     }
@@ -76,7 +76,7 @@ function AllAttendanceListPage() {
   const handleDetail = async (attendanceId: number) => {
     if (!accessToken || detailLoading) return;
 
-    setModal(true);
+    setOpenModal(true);
     setSelectedAttendance(undefined);
 
     try {
@@ -89,17 +89,17 @@ function AllAttendanceListPage() {
         setSelectedAttendance(data);
       } else {
         console.error("출근부 상세 조회 실패: ", message);
-        alert("출근부 상세 조회 실패");
+        alert("출근부 상세 조회 실패: " + message);
       }
     } catch (e) {
       console.error("출근부 상세 조회 중 에러 발생: ", e);
-      alert("출근부 상세 조회 요청 중 문제 발생");
+      alert("출근부 상세 조회 중 에러 발생: " + e);
     } finally {
       setDetailLoading(false);
     }
   };
 
-  const handleModalClose = () => setModal(false);
+  const handleModalClose = () => setOpenModal(false);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -168,7 +168,7 @@ function AllAttendanceListPage() {
                         <TableCell align="center">{row.workEnd}</TableCell>
                         <TableCell align="center">
                           <IconButton onClick={() => handleDetail(row.id)}>
-                            <EditDocumentIcon />
+                            <EditNoteIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -196,7 +196,7 @@ function AllAttendanceListPage() {
 
         <AttendanceDetailModal
           attendance={selectedAttendance}
-          open={modal}
+          open={openModal}
           loading={detailLoading}
           onClose={handleModalClose}
         />

@@ -13,7 +13,7 @@ const customers = [
 
 function CreateContractPage() {
 
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDMyOTUwMCwiZXhwIjoxNzYwMzY1NTAwfQ.4_nCw4WXhX7AWAP3GZMrQMkCidFz4rXGwAKruuzNwnQ";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDY2OTI4MSwiZXhwIjoxNzYwNzA1MjgxfQ.qXBKGcdS8cAVGSuLhEo3t1Bsar7OngWvWQlxzjOxY4o";
 
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
 
@@ -92,7 +92,7 @@ function CreateContractPage() {
         <Toolbar />
 
         <Typography variant="h4" gutterBottom>
-          계약 생성
+          계약 생성(관리자)
         </Typography>
 
         <Paper sx={{ p: 4, maxWidth: '800px', margin: 'auto' }}>

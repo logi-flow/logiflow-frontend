@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { deleteContract, getAllContract, getContractDetail, updateContract } from '../../../apis/contract/contract.apis';
+import type { GetContractResponseDto } from '../../dtos/contract/response/get-contract.response.dto';
+import { getContractDetail, getMyContract, updateContractStatus } from '../../apis/contract/contract.apis';
+import type { UpdateContractStatusRequestDto } from '../../dtos/contract/request/update-contract-status.request.dto';
 import { Box, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from '@mui/material';
+import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
+import { ContractStatus } from '../../enums/contract-status.enum';
 import EditDocumentIcon from '@mui/icons-material/EditNote';
-import type { GetContractResponseDto } from '../../../dtos/contract/response/get-contract.response.dto';
-import ContractDetailModal from '../../../components/contract/ContractDetailModal';
-import type { UpdateContractRequestDto } from '../../../dtos/contract/request/update-contract.request.dto';
-import Sidebar from '../../../components/Sidebar';
-import Header from '../../../components/Header';
-import { ContractStatus } from '../../../enums/contract-status.enum';
+import CustomerContractDetailModal from '../../components/contract/CustomerContractDetailModal';
 
 const statusFilters = ['ALL', ...Object.values(ContractStatus)];
 
-function ContractListPage() {
+function CustomerContractListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDY2OTI4MSwiZXhwIjoxNzYwNzA1MjgxfQ.qXBKGcdS8cAVGSuLhEo3t1Bsar7OngWvWQlxzjOxY4o";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNjY5MjM3LCJleHAiOjE3NjA3MDUyMzd9.iDsXnTJp3rdEEPiT65tX6AbQp_0uxAVdBall5O4f0eo";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<GetContractResponseDto | null>(null);
@@ -47,7 +47,7 @@ function ContractListPage() {
       setError(null);
 
       try {
-        const response = await getAllContract(page, size, sort, accessToken);
+        const response = await getMyContract(page, size, sort, accessToken);
         if (response.code === "SU" && Array.isArray(response.data?.content)) {
           setContracts(response.data.content);
           console.log(response.data.content);
@@ -77,58 +77,22 @@ function ContractListPage() {
     }
   }
 
-  const handleDelete = async () => {
+  const handleStatusUpdate = async (updatedContract: GetContractResponseDto, changeReason: string) => {
     if (!selectedContract) return;
 
-    const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
-    if (!confirmDelete) return;
-
-    const response = await deleteContract(selectedContract.id, accessToken);
-
-    if (response.code === "SU") {
-      alert('삭제 완료');
-      setContracts((prevContracts) =>
-        prevContracts.filter((contract) => contract.id !== selectedContract.id)
-      );
-      closeModal();
-    } else {
-      alert('삭제 실패: ' + response.message);
-      closeModal();
-    }
-  };
-
-  const handleUpdate = async (updatedContract: GetContractResponseDto) => {
-
-    const dto: UpdateContractRequestDto = {
-      startDate: updatedContract.startDate,
-      endDate: updatedContract.endDate,
-      baseFee: updatedContract.baseFee,
-      weightLimitKg: updatedContract.weightLimitKg,
-      parcelLimit: updatedContract.parcelLimit,
-      overWeightFeePerKg: updatedContract.overWeightFeePerKg,
-      overParcelFee: updatedContract.overParcelFee,
-      specialTerms: updatedContract.specialTerms,
+    const dto: UpdateContractStatusRequestDto = {
+      status: updatedContract.status,
+      changeReason: changeReason
     };
 
-    const response = await updateContract(selectedContract!.id, dto, accessToken);
-
     try {
+      const response = await updateContractStatus(selectedContract!.id, dto, accessToken);
       if (response.code === "SU") {
-        alert('수정 완료');
+        alert("상태 수정 완료");
         setContracts((prevContracts) =>
           prevContracts.map((contract) =>
             contract.id === updatedContract.id
-              ? {
-                ...contract,
-                startDate: updatedContract.startDate,
-                endDate: updatedContract.endDate,
-                baseFee: updatedContract.baseFee,
-                weightLimitKg: updatedContract.weightLimitKg,
-                parcelLimit: updatedContract.parcelLimit,
-                overWeightFeePerKg: updatedContract.overWeightFeePerKg,
-                overParcelFee: updatedContract.overParcelFee,
-                specialTerms: updatedContract.specialTerms,
-              }
+              ? { ...contract, status: updatedContract.status }
               : contract
           )
         );
@@ -152,7 +116,6 @@ function ContractListPage() {
       <Header />
       <Sidebar />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-
         <Toolbar />
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -171,9 +134,8 @@ function ContractListPage() {
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: ' center', mb: 2 }}>
               <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }}>
-                계약 목록(관리자)
+                계약 목록(고객사)
               </Typography>
-
               <ToggleButtonGroup
                 color='primary'
                 value={selectedStatus}
@@ -188,7 +150,6 @@ function ContractListPage() {
                 ))}
               </ToggleButtonGroup>
             </Box>
-
             {(() => {
               const filteredContracts = selectedStatus === 'ALL'
                 ? contracts
@@ -200,7 +161,6 @@ function ContractListPage() {
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                       <TableRow>
                         <TableCell align='center'>계약 번호</TableCell>
-                        <TableCell align='center'>고객 번호</TableCell>
                         <TableCell align='center'>고객 이름</TableCell>
                         <TableCell align='center'>상태</TableCell>
                         <TableCell align='center'>시작일</TableCell>
@@ -222,7 +182,6 @@ function ContractListPage() {
                         filteredContracts.map((contract) => (
                           <TableRow key={contract.id}>
                             <TableCell align='center'>{contract.id}</TableCell>
-                            <TableCell align='center'>{contract.customerId}</TableCell>
                             <TableCell align='center'>{contract.customerName}</TableCell>
                             <TableCell align='center'>{contract.status}</TableCell>
                             <TableCell align='center'>{contract.startDate}</TableCell>
@@ -242,20 +201,20 @@ function ContractListPage() {
                 </TableContainer>
               );
             })()}
+            {selectedContract && (
+              <CustomerContractDetailModal
+                isOpen={modalOpen}
+                onClose={closeModal}
+                onUpdate={handleStatusUpdate}
+                contract={selectedContract}
+              />
+            )}
           </>
         )}
-        {selectedContract && (
-          <ContractDetailModal
-            isOpen={modalOpen}
-            onClose={closeModal}
-            onDelete={handleDelete}
-            onUpdate={handleUpdate}
-            contract={selectedContract}
-          />
-        )}
-      </Box >
+      </Box>
+
     </Box>
   )
 }
 
-export default ContractListPage
+export default CustomerContractListPage

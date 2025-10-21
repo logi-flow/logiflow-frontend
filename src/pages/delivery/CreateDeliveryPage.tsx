@@ -6,6 +6,8 @@ import { createDelivery } from '../../apis/delivery/delivery.apis';
 import type { CreateDeliveryRequestDto } from '../../dtos/delivery/request/create-delivery.request.dto';
 import { getMyContract } from '../../apis/contract/contract.apis';
 import type { GetAllContractResponseDto } from '../../dtos/contract/response/get-all-contract.response.dto';
+import { getAllCollectionSite } from '../../apis/collectionSite/collection-site.api';
+import type { GetAllCollectionSiteResponseDto } from '../../dtos/collectionSite/response/get-all-collection-site.response.dto';
 
 declare global {
   interface Window {
@@ -13,19 +15,16 @@ declare global {
   }
 }
 
-const mockCollectionSites = [
-  { id: 1, name: '이거밖에 없음' }
-];
-
 function CreateDeliveryPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  // const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwMzI5NTY0LCJleHAiOjE3NjAzNjU1NjR9.Lp5gcljRIWZ0cZcoc_jGiDWyykwHkYqXyG0YNHMWFyM"
 
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAyIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNTA0NzA0LCJleHAiOjE3OTY1MDQ3MDR9.EMrojX2PYxc6OdZ4LOWqQbnC2YjggeHqim7wwi8agbM"
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjAxIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzYwNjY5MjM3LCJleHAiOjE3NjA3MDUyMzd9.iDsXnTJp3rdEEPiT65tX6AbQp_0uxAVdBall5O4f0eo";
 
   const [contracts, setContracts] = useState<GetAllContractResponseDto[]>([]);
+
+  const [collectionSites, setCollectionSites] = useState<GetAllCollectionSiteResponseDto[]>([]);
 
   const [formData, setFormData] = useState<CreateDeliveryRequestDto>({
     contractId: 0,
@@ -57,6 +56,20 @@ function CreateDeliveryPage() {
       } catch (err) {
         console.log("계약 정보 로딩 중 오류: ", err);
         alert("계약 정보 로딩 중 오류 발생");
+      }
+
+      // 수거지 정보 가져오기
+      try {
+        const siteResponse = await getAllCollectionSite(page, size, sort, accessToken);
+        if (siteResponse.code === "SU" && siteResponse.data) {
+          setCollectionSites(siteResponse.data.content);
+        } else {
+          console.log("수거지 불러오기 실패: ", siteResponse.message);
+          alert("수거지 불러오기 실패");
+        }
+      } catch (err) {
+        console.log(err);
+        alert("수거지 로딩 중 오류")
       }
     };
     fetchContracts();
@@ -129,7 +142,7 @@ function CreateDeliveryPage() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }}>
-          배송 신청
+          배송 신청(고객사)
         </Typography>
 
         <Paper sx={{ p: 4, maxWidth: '900px', margin: 'auto' }}>
@@ -151,7 +164,7 @@ function CreateDeliveryPage() {
                 <FormControl fullWidth required>
                   <InputLabel>수거지 선택</InputLabel>
                   <Select name='collectionSiteId' value={formData.collectionSiteId} label="수거지 선택" onChange={handleSelectChange}>
-                    {mockCollectionSites.map(collectionSite =>
+                    {collectionSites.map(collectionSite =>
                       <MenuItem key={collectionSite.id} value={collectionSite.id}>{collectionSite.name}</MenuItem>
                     )}
                   </Select>
@@ -205,14 +218,9 @@ function CreateDeliveryPage() {
                   배송 신청하기
                 </Button>
               </Grid>
-
-
             </Grid>
           </Box>
-
         </Paper>
-
-
       </Box >
     </Box >
   )
