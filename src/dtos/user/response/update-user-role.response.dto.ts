@@ -1,6 +1,6 @@
 import type { UserRole } from "../../../enums/user-role.enum";
 
-export interface GetUserDetailResponseDto {
+export interface UpdateUserRoleResponseDto {
   id?: number;
   role: UserRole;
   changedBy: number;
