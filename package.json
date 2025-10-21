@@ -14,8 +14,12 @@
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.2",
     "axios": "^1.12.2",
+    "cookies": "^0.9.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-cookie": "^8.0.1",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.9.1",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

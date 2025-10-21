@@ -1,4 +1,3 @@
-import type { CustomerStatus } from "../../../enums/customer-status.enum";
 import type { EmployeeStatus } from "../../../enums/employee-status.enum";
 
 export interface UpdateEmployeeStatusResponseDto {
