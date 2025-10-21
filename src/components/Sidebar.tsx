@@ -73,6 +73,17 @@ function Sidebar() {
           {/* 항목 추가 여기 */}
 
           <ListItem disablePadding>
+            <Link to="/return-deliveries" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/returnDeliveries'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="반품 배송 전체 조회" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
             <Link to="/attendances/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
               <ListItemButton selected={currentPath === '/attendances/list'}>
                 <ListItemIcon>
