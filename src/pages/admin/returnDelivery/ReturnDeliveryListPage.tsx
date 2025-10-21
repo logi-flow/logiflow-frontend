@@ -27,6 +27,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import Header from "../../../components/Header.tsx";
 import Sidebar from "../../../components/Sidebar.tsx";
 import { DeliveryStatus } from "../../../enums/delivery-status.enum.ts";
+import ReturnDeliveryDetailModal from "../../../components/returnDelivery/ReturnDeliveryDetailModal.tsx";
 
 const statusFilters = ["ALL", ...Object.values(DeliveryStatus)];
 
@@ -35,7 +36,7 @@ function ReturnDeliveryListPage() {
   const size = 10;
   const sort = "createdAt, desc";
   const accessToken =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDUwNDk1MCwiZXhwIjoxNzk2NTA0OTUwfQ.EY4BtQUumbg8Gq-rs1QmMnAyymn-z3Q90dFomsIEsm0";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTAyNDA4NiwiZXhwIjoxNzk3MDI0MDg2fQ.K6FQbg0U11hyNlUhnWd0UZN87Ebq8vVTElOkNSO3EQk";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedReturnDelivery, setSelectedReturnDelivery] =
@@ -269,7 +270,7 @@ function ReturnDeliveryListPage() {
                             </TableCell>
                             <TableCell>{returnDelivery.customerId}</TableCell>
                             <TableCell>
-                              {returnDelivery.recipientName}
+                              {returnDelivery.pickupName}
                             </TableCell>
                             <TableCell align="center">
                               {returnDelivery.status}
@@ -299,6 +300,15 @@ function ReturnDeliveryListPage() {
               );
             })()}
           </>
+        )}
+        {selectedReturnDelivery && (
+          <ReturnDeliveryDetailModal
+            isOpen={modalOpen}
+            onClose={closeModal}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            returnDelivery={selectedReturnDelivery}
+          />
         )}
       </Box>
     </Box>
