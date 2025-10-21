@@ -1,4 +1,4 @@
-export interface FirstPasswordChangeReponseDto {
+export interface FirstPasswordChangeResponseDto {
   username: string;
   createdAt: string;
   updatedAt: string;

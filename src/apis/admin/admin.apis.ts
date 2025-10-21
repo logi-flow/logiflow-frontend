@@ -3,7 +3,9 @@ import type PageDto from "../../dtos/page.dto";
 import type ResponseDto from "../../dtos/response.dto";
 import type { GetAllUserResponseDto } from "../../dtos/user/response/get-all-user.response.dto";
 import { axiosInstance, bearerAuthorization, responseErrorHandler, responseSuccessHandler } from "../axios-config";
-import { GET_ALL_USER_URL } from "./admin.urls";
+import { ADMIN_PASSWORD_RESET_URL, GET_ALL_USER_URL } from "./admin.urls";
+import type { AdminResetPasswordResponseDto } from "../../dtos/admin/response/admin-reset-password.response.dto";
+import type { AdminResetPasswordRequestDto } from "../../dtos/admin/request/admin-reset-password.request.dto";
 
 export const getAllUser = async (
   page: number,
@@ -21,5 +23,19 @@ export const getAllUser = async (
     return responseSuccessHandler(response);
   } catch (error) {
     return responseErrorHandler(error as AxiosError<ResponseDto>)
+  }
+};
+
+export const adminPasswordResetCustomer = async (
+  dto: AdminResetPasswordRequestDto,
+) : Promise<ResponseDto<AdminResetPasswordResponseDto>> => {
+  try {
+    const response = await axiosInstance.post(
+      ADMIN_PASSWORD_RESET_URL,
+      dto
+    );
+    return responseSuccessHandler(response);
+  } catch (error) {
+    return responseErrorHandler(error as AxiosError<ResponseDto>);
   }
 };

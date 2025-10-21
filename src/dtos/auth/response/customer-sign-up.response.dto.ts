@@ -1,4 +1,4 @@
-export interface CustomerSignUpResopnseDto {
+export interface CustomerSignUpResponseDto {
   id?: number;
   username: string;
   createdAt: string;
