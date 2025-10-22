@@ -1,7 +1,8 @@
 import { Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import ConfirmModal from "../ConfirmModal";
 import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ConfirmModal from "../ConfirmModal";
 import { useState } from "react";
 import type { GetDriverPayrollDetailResponseDto } from "../../dtos/driverPayroll/response/get-driver-payroll-detail.response.dto";
 import { payrollStatusColorMap, payrollStatusMap } from "../../enums/driver-payroll-status.enum";
@@ -16,9 +17,10 @@ interface Props {
   onAllowanceEdit: () => void;
   onDeductionEdit: () => void;
   onDelete: (payrollId: number) => void;
+  onAllowanceCreate: () => void;
 }
 
-function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEdit, onAllowanceEdit, onDeductionEdit, onDelete }: Props) {
+function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEdit, onAllowanceEdit, onDeductionEdit, onDelete, onAllowanceCreate }: Props) {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const handleClose = (_: object, reason?: 'backdropClick' | 'escapeKeyDown') => {
@@ -173,15 +175,26 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
                       <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', p: '16px' }}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>수당 내역</Typography>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<EditIcon />}
-                            disabled={loading}
-                            onClick={onAllowanceEdit}
-                          >
-                            수정
-                          </Button>
+                          <Stack spacing={2} direction="row" alignItems="center" justifyContent="right">
+                            <Button
+                              variant="contained"
+                              size="small"
+                              startIcon={<AddCircleOutlineIcon />}
+                              disabled={loading}
+                              onClick={onAllowanceCreate}
+                            >
+                              등록
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              startIcon={<EditIcon />}
+                              disabled={loading}
+                              onClick={onAllowanceEdit}
+                            >
+                              수정
+                            </Button>
+                          </Stack>
                         </Stack>
                       </TableCell>
                     ) : (
@@ -192,14 +205,17 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
               </Table>
 
               <Table size="medium" sx={{ border: '1px solid lightGray' }}>
+                <caption>수당 총액: {payroll.totalAllowance} 원</caption>
                 <TableHead>
-                  <TableCell align="center">순번</TableCell>
-                  <TableCell align="center">코드명</TableCell>
-                  <TableCell align="center">항목명</TableCell>
-                  <TableCell align="center">수량(일수)</TableCell>
-                  <TableCell align="center">단가(원)</TableCell>
-                  <TableCell align="center">합계(원)</TableCell>
-                  <TableCell align="center">메모</TableCell>  
+                  <TableRow>
+                    <TableCell align="center">순번</TableCell>
+                    <TableCell align="center">코드명</TableCell>
+                    <TableCell align="center">항목명</TableCell>
+                    <TableCell align="center">수량(일수)</TableCell>
+                    <TableCell align="center">단가(원)</TableCell>
+                    <TableCell align="center">합계(원)</TableCell>
+                    <TableCell align="center">메모</TableCell>  
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {!loading && (!payroll.allowanceItems || payroll.allowanceItems.length === 0) && (
@@ -212,7 +228,7 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
 
                   {!loading && payroll.allowanceItems.map((row, index) => {
                     return (
-                      <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
+                      <TableRow key={row.id}>
                         <TableCell align="center">{index + 1}</TableCell>
                         <TableCell align="center">{row.allowanceTypeCode}</TableCell>
                         <TableCell align="center">{row.allowanceTypeName}</TableCell>
@@ -235,15 +251,26 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
                       <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', p: '16px' }}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>공제 내역</Typography>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<EditIcon />}
-                            disabled={loading}
-                            onClick={onDeductionEdit}
-                          >
-                            수정
-                          </Button>
+                          <Stack spacing={2} direction="row" alignItems="center" justifyContent="right">
+                            <Button
+                              variant="contained"
+                              size="small"
+                              startIcon={<AddCircleOutlineIcon />}
+                              disabled={loading}
+                              onClick={onAllowanceCreate}
+                            >
+                              등록
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              startIcon={<EditIcon />}
+                              disabled={loading}
+                              onClick={onDeductionEdit}
+                            >
+                              수정
+                            </Button>
+                          </Stack>
                         </Stack>
                       </TableCell>
                     ) : (
@@ -266,13 +293,15 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
               ) : (
                 <Table size="medium">
                   <TableHead>
-                    <TableCell align="center">순번</TableCell>
-                    <TableCell align="center">코드명</TableCell>
-                    <TableCell align="center">항목명</TableCell>
-                    <TableCell align="center">수량(일수)</TableCell>
-                    <TableCell align="center">단가(원)</TableCell>
-                    <TableCell align="center">합계(원)</TableCell>
-                    <TableCell align="center">메모</TableCell>  
+                    <TableRow>
+                      <TableCell align="center">순번</TableCell>
+                      <TableCell align="center">코드명</TableCell>
+                      <TableCell align="center">항목명</TableCell>
+                      <TableCell align="center">수량(일수)</TableCell>
+                      <TableCell align="center">단가(원)</TableCell>
+                      <TableCell align="center">합계(원)</TableCell>
+                      <TableCell align="center">메모</TableCell>  
+                    </TableRow>
                   </TableHead>
                   <TableBody>
                     {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) && (
@@ -285,7 +314,7 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
 
                     {!loading && payroll.deductionItems.map((row, index) => {
                       return (
-                        <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
+                        <TableRow key={row.id}>
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell align="center">{row.deductionTypeCode}</TableCell>
                           <TableCell align="center">{row.deductionTypeName}</TableCell>
@@ -325,12 +354,14 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollEd
         )}
       </DialogContent>
       
-      <DialogActions>
-        <Button onClick={handleDelete} variant="contained" color="error" disabled={loading || !payroll}>
-          삭제
-        </Button>
-      </DialogActions>
-
+      {!loading && payroll?.status === "CREATED" && (
+          <DialogActions>
+          <Button onClick={handleDelete} variant="contained" color="error" disabled={loading || !payroll}>
+            삭제
+          </Button>
+        </DialogActions>
+      )}
+      
       <ConfirmModal
         open={openConfirmModal}
         type="삭제"

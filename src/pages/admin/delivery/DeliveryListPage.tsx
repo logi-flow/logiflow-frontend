@@ -15,7 +15,7 @@ function DeliveryListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTAyNzAxNiwiZXhwIjoxNzYxMDYzMDE2fQ.2BzK21KKGW0Op9iSrlYF1Ob71XhvVya3f2IAQbtwU3g";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDUwNDk1MCwiZXhwIjoxNzk2NTA0OTUwfQ.EY4BtQUumbg8Gq-rs1QmMnAyymn-z3Q90dFomsIEsm0";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<GetDeliveryResponseDto | null>(null);

@@ -1,6 +1,6 @@
 import type { CustomerStatus } from "../../../enums/customer-status.enum";
 
-export interface GetAllCustomerDetailResponseDto {
+export interface GetCustomerDetailResponseDto {
   id?: number;
   userId?: number;
   status: CustomerStatus;
