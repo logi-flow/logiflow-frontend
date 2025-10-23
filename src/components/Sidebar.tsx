@@ -199,18 +199,27 @@ function Sidebar() {
             </ListItemButton>
           </Link>
         </ListItem>
-        <List>
-          {/* <ListItem disablePadding>
-            <Link to="/delivery/create" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText primary="배송 신청" />
-              </ListItemButton>
-            </Link>
-          </ListItem> */}
-        </List>
+        <Divider />
+        <ListItem disablePadding>
+          <Link to="/allocations" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/allocations'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="배차 생성" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+        <ListItem disablePadding>
+          <Link to="/schedules" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+            <ListItemButton selected={currentPath === '/schedules'}>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="스케줄 전체 조회" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
       </Box>
     </Drawer>
   )

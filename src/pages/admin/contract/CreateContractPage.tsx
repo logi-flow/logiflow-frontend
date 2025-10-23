@@ -1,20 +1,19 @@
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Toolbar, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../../components/Sidebar'
 import Header from '../../../components/Header'
 import { createContract } from '../../../apis/contract/contract.apis';
 import type { CreateContractRequestDto } from '../../../dtos/contract/request/create-contract.request.dto';
-
-const customers = [
-  { id: 1, name: 'Customer A' },
-  { id: 2, name: '내 디비에는 2번밖에 없음' },
-  { id: 3, name: 'Customer C' },
-];
+import { getAllCustomer } from '../../../apis/customer/customer.apis';
+import type { GetAllCustomerResponseDto } from '../../../dtos/customer/response/get-all-customer.response.dto';
 
 function CreateContractPage() {
+  const page = 0;
+  const size = 10;
+  const sort = "createdAt,desc";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTE5NTkwNSwiZXhwIjoxNzYxMjMxOTA1fQ.Ug_i4SQ_-3zYqJQBUVjR6psli9SEQYPe65jDzXzOWM0";
 
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTAyNzAxNiwiZXhwIjoxNzYxMDYzMDE2fQ.2BzK21KKGW0Op9iSrlYF1Ob71XhvVya3f2IAQbtwU3g";
-
+  const [customers, setCustomers] = useState<GetAllCustomerResponseDto[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
 
   const [formData, setFormData] = useState<CreateContractRequestDto>({
@@ -27,6 +26,23 @@ function CreateContractPage() {
     overParcelFee: 0,
     specialTerms: ''
   });
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await getAllCustomer(page, size, sort, accessToken);
+        if (response.code === "SU" && response.data) {
+          setCustomers(response.data.content);
+        } else {
+          alert('고객사 정보를 불러오는데 실패: ' + response.message);
+        }
+      } catch (err) {
+        alert('고객사 정보 로딩 중 오류 발생');
+      }
+    };
+    fetchCustomers();
+  }, []);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
