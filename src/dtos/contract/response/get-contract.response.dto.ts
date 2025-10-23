@@ -1,6 +1,7 @@
 export interface GetContractResponseDto {
   id: number;
   customerId: number;
+  customerName: string;
   status: string;
   startDate: string;
   endDate: string;

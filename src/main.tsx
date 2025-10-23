@@ -16,6 +16,8 @@ import CustomerContractListPage from './pages/contract/CustomerContractListPage'
 import CustomerDeliveryListPage from './pages/delivery/CustomerDeliveryListPage'
 import AllDriverPayrollListPage from './pages/driverPayroll/AllDriverPayrollListPage'
 import MyDriverPayrollListPage from './pages/driverPayroll/MyDriverPayrollListPage'
+import CreateAllocationPage from './pages/admin/allocation/CreateAllocationPage'
+import ScheduleListPage from './pages/admin/schedule/ScheduleListPage'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -45,6 +47,10 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/attendances/me/list" element={<MyAttendanceListPage />} />
       <Route path="/payrolls/me/list" element={<MyDriverPayrollListPage />} />
     </Routes>
-    
+
+    <Routes>
+      <Route path='/allocations' element={<CreateAllocationPage />} />
+      <Route path='/schedules' element={<ScheduleListPage />} />
+    </Routes>
   </BrowserRouter>,
 )

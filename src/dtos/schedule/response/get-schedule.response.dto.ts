@@ -6,4 +6,5 @@ export interface GetScheduleResponseDto {
   arrivalTime: string;
   createdAt: string;
   updatedAt: string;
+  status: string;
 }

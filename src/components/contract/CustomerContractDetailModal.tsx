@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import type { GetContractResponseDto } from '../../dtos/contract/response/get-contract.response.dto';
 import { ContractStatus } from '../../enums/contract-status.enum';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField, Stack, Paper, TableContainer, Table, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import type { SelectChangeEvent } from '@mui/material';
 
 type CustomerContractModalProps = {
   isOpen: boolean;
@@ -30,7 +32,7 @@ function CustomerContractDetailModal(props: CustomerContractModalProps) {
     return null;
   }
 
-  const handleStatusChange = (event: any) => {
+  const handleStatusChange = (event: SelectChangeEvent<any>) => {
     const { value } = event.target;
     setEditableContract((prev) => (prev ? { ...prev, status: value } : prev));
   }
@@ -38,7 +40,7 @@ function CustomerContractDetailModal(props: CustomerContractModalProps) {
   const handleUpdateClick = () => {
     if (isEditing) {
       if (!changeReason) {
-        alert("변경 사유 입력해야함");
+        alert("변경 사유를 입력해야 합니다.");
         return;
       }
       if (editableContract) {
@@ -57,138 +59,105 @@ function CustomerContractDetailModal(props: CustomerContractModalProps) {
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth='md' fullWidth>
-      <DialogTitle>계약 세부 정보</DialogTitle>
-      <DialogContent>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6}>
-            <TextField label="계약 ID" name='id' value={editableContract.id} fullWidth disabled />
-          </Grid>
+      <DialogTitle>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          계약 세부 정보
+          <IconButton onClick={onClose}><CloseIcon /></IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <TableContainer component={Paper} elevation={0}>
+            <Table>
+              <TableBody>
+                <TableRow><TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>계약 기본 정보</TableCell></TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, width: '20%' }}>계약 ID</TableCell>
+                  <TableCell sx={{ width: '30%' }}>{editableContract.id}</TableCell>
+                  <TableCell sx={{ fontWeight: 600, width: '20%' }}>계약 상태</TableCell>
+                  <TableCell sx={{ width: '30%' }}>
+                    {isEditing ? (
+                      <FormControl size="small" sx={{ minWidth: 150 }}>
+                        <Select value={editableContract.status} onChange={handleStatusChange}>
+                          {contractStatusOptions.map((status) => (
+                            <MenuItem key={status} value={status}>{status}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      editableContract.status
+                    )}
+                  </TableCell>
+                </TableRow>
+                {isEditing && (
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600 }}>변경 사유</TableCell>
+                    <TableCell colSpan={3}>
+                      <TextField
+                        value={changeReason}
+                        onChange={(e) => setChangeReason(e.target.value)}
+                        fullWidth required autoFocus
+                        variant="standard"
+                        placeholder='예: 계약 해지 요청'
+                      />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>계약 상태</InputLabel>
-              <Select
-                label='계약 상태'
-                value={editableContract.status}
-                onChange={handleStatusChange}
-                disabled={!isEditing}
-              >
-                {contractStatusOptions.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-              {isEditing && (
-                <Grid item xs={12}>
-                  <TextField label="변경 사유" value={changeReason} onChange={(e) => setChangeReason(e.target.value)} fullWidth required autoFocus sx={{ mt: 1 }} placeholder='예: 고객 요청으로 배송 취소' />
-                </Grid>
-              )}
-            </FormControl>
-          </Grid>
+          <TableContainer component={Paper} elevation={0}>
+            <Table>
+              <TableBody>
+                <TableRow><TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>계약 기간 및 요금 정보</TableCell></TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>시작일</TableCell>
+                  <TableCell>{editableContract.startDate}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>종료일</TableCell>
+                  <TableCell>{editableContract.endDate}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>기본 요금</TableCell>
+                  <TableCell>{editableContract.baseFee.toLocaleString()}원</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>제한 무게(kg)</TableCell>
+                  <TableCell>{editableContract.weightLimitKg.toLocaleString()}kg</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>제한 건수</TableCell>
+                  <TableCell>{editableContract.parcelLimit.toLocaleString()}건</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>초과 무게 요금(kg당)</TableCell>
+                  <TableCell>{editableContract.overWeightFeePerKg.toLocaleString()}원</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>초과 건수 요금</TableCell>
+                  <TableCell colSpan={3}>{editableContract.overParcelFee.toLocaleString()}원</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="시작일"
-              name="startDate"
-              value={editableContract.startDate}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="종료일"
-              name="endDate"
-              value={editableContract.endDate}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="기본 요금"
-              name="baseFee"
-              value={editableContract.baseFee}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="제한 무게"
-              name="weightLimitKg"
-              value={editableContract.weightLimitKg}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="제한 건수"
-              name="parcelLimit"
-              value={editableContract.parcelLimit}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="무게당 추가 요금"
-              name="overWeightFeePerKg"
-              value={editableContract.overWeightFeePerKg}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="건수당 추가 요금"
-              name="overParcelFee"
-              value={editableContract.overParcelFee}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              label="특약 사항"
-              name="specialTerms"
-              value={editableContract.specialTerms}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="생성일"
-              name="createdAt"
-              value={editableContract.createdAt}
-              disabled
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="수정일"
-              name="updatedAt"
-              value={editableContract.updatedAt}
-              disabled
-              fullWidth
-            />
-          </Grid>
-        </Grid>
+          <TableContainer component={Paper} elevation={0}>
+            <Table>
+              <TableBody>
+                <TableRow><TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>기타 정보</TableCell></TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, width: '20%' }}>특약 사항</TableCell>
+                  <TableCell colSpan={3}>{editableContract.specialTerms || '-'}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>생성일</TableCell>
+                  <TableCell>{editableContract.createdAt}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>수정일</TableCell>
+                  <TableCell>{editableContract.updatedAt}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Stack>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ p: 2 }}>
+        <div style={{ flex: '1 0 0' }} />
         {isEditing && (
           <Button onClick={handleCancelClick}>취소</Button>
         )}
@@ -201,4 +170,4 @@ function CustomerContractDetailModal(props: CustomerContractModalProps) {
   )
 }
 
-export default CustomerContractDetailModal
+export default CustomerContractDetailModal;
