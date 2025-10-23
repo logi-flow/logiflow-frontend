@@ -37,7 +37,7 @@ function AttendanceDetailModal({ attendance, open, loading, onClose }: Props) {
       <DialogContent dividers>
         {loading ? (
           <Stack sx={{ p: 3 }} alignItems="center" >
-            <CircularProgress color="inherit" size={28} sx={{ mx: 'auto'}}/>
+            <CircularProgress color="inherit" size={28} sx={{ mx: 'auto' }} />
           </Stack>
         ) : attendance ? (
           <Stack spacing={2}>
