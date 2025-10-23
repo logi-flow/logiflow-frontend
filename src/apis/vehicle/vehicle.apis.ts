@@ -9,6 +9,7 @@ import type { UpdateVehicleRequestDto } from "../../dtos/vehicle/request/update-
 import type { UpdateVehicleStatusRequestDto } from "../../dtos/vehicle/request/update-vehicle-status.request.dto";
 import type PageDto from "../../dtos/page.dto";
 import type { GetAllVehicleRseponseDto } from "../../dtos/vehicle/response/get-all-vehicle.response.dto";
+import type { GetVehicleDetailRseponseDto } from "../../dtos/vehicle/response/get-vehicle-detail.response.dto";
 
 export const createVehicle = async (
     dto: CreateVehicleRequestDto,
@@ -81,7 +82,7 @@ export const getAllVehicle = async (
 export const getVehicleDetail = async (
     vehicleId: number,
     accessToken: string
-): Promise<ResponseDto<CreateVehicleResponseDto>> => {
+): Promise<ResponseDto<GetVehicleDetailRseponseDto>> => {
     try {
         const response = await axiosInstance.get(
             GET_VEHICLE_DETAIL_URL(vehicleId),
