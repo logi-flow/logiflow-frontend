@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import type { GetDeliveryResponseDto } from '../../dtos/delivery/response/get-delivery.response.dto';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField, Stack, Paper, TableContainer, Table, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { DeliveryStatus } from '../../enums/delivery-status.enum';
-
 
 type DeliveryModalProps = {
   isOpen: boolean;
@@ -12,7 +12,7 @@ type DeliveryModalProps = {
   delivery: GetDeliveryResponseDto | null;
 }
 
-const deliveryStatusOptions = Object.values(DeliveryStatus)
+const deliveryStatusOptions = Object.values(DeliveryStatus);
 
 function DeliveryDetailModal(props: DeliveryModalProps) {
 
@@ -41,7 +41,7 @@ function DeliveryDetailModal(props: DeliveryModalProps) {
   const handleUpdateClick = () => {
     if (isEditing) {
       if (!changeReason) {
-        alert("변경 사유를 반드시 입력해야 함.");
+        alert("변경 사유를 반드시 입력해야 합니다.");
         return;
       }
       if (editableDelivery) {
@@ -64,92 +64,142 @@ function DeliveryDetailModal(props: DeliveryModalProps) {
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>배송 세부 정보</DialogTitle>
-      <DialogContent>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6}>
-            <TextField label="배송 ID" value={editableDelivery.id} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="고객사 번호" value={editableDelivery.customerId} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="수거지" value={editableDelivery.pickupName} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="계약 번호" value={editableDelivery.contractId} fullWidth disabled />
-          </Grid>
+      <DialogTitle>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          배송 세부 정보
+          <IconButton onClick={onClose}><CloseIcon /></IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <TableContainer component={Paper} elevation={0}>
+            <Table size="medium">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>기본 정보</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, width: '20%' }}>배송 ID</TableCell>
+                  <TableCell sx={{ width: '30%' }}>{editableDelivery.id}</TableCell>
+                  <TableCell sx={{ fontWeight: 600, width: '20%' }}>고객사 ID</TableCell>
+                  <TableCell sx={{ width: '30%' }}>{editableDelivery.customerId}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>계약 번호</TableCell>
+                  <TableCell>{editableDelivery.contractId}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>수거지</TableCell>
+                  <TableCell>{editableDelivery.pickupName}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>배송 상태</InputLabel>
-              <Select
-                label="배송 상태"
-                value={editableDelivery.status}
-                onChange={handleStatusChange}
-                disabled={!isEditing}
-              >
-                {deliveryStatusOptions.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
 
-              </Select>
-              {isEditing && (
-                <Grid item xs={12}>
-                  <TextField label="변경 사유" value={changeReason} onChange={(e) => setChangeReason(e.target.value)} fullWidth required autoFocus sx={{ mt: 1 }} placeholder='예: 고객 요청으로 배송 취소' />
-                </Grid>
-              )}
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="도착 희망일" type='datetime-local' value={editableDelivery.requestDate} disabled fullWidth InputLabelProps={{ shrink: true }} />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="품목" value={editableDelivery.item} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="무게 (kg)" value={editableDelivery.weight} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="수령인 이름" value={editableDelivery.recipientName} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="수령인 연락처" value={editableDelivery.recipientPhone} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField label="우편번호" value={editableDelivery.recipientZipcode} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={8}>
-            <TextField label="주소" value={editableDelivery.recipientAddress} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField label="상세주소" value={editableDelivery.recipientAddressDetail} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField label="배송 메시지" value={editableDelivery.message} multiline rows={2} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="생성일" value={editableDelivery.createdAt} fullWidth disabled />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label="수정일" value={editableDelivery.updatedAt} fullWidth disabled />
-          </Grid>
-        </Grid>
+          <TableContainer component={Paper} elevation={0}>
+            <Table size="medium">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>배송 상태 및 요청 정보</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>배송 상태</TableCell>
+                  <TableCell>
+                    {isEditing ? (
+                      <FormControl size="small" sx={{ minWidth: 150 }}>
+                        <Select value={editableDelivery.status} onChange={handleStatusChange}>
+                          {deliveryStatusOptions.map((status) => (
+                            <MenuItem key={status} value={status}>{status}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      editableDelivery.status
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>도착 희망일</TableCell>
+                  <TableCell>{editableDelivery.requestDate}</TableCell>
+                </TableRow>
+                {isEditing && (
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600 }}>변경 사유</TableCell>
+                    <TableCell colSpan={3}>
+                      <TextField
+                        value={changeReason}
+                        onChange={(e) => setChangeReason(e.target.value)}
+                        fullWidth required autoFocus
+                        variant="standard"
+                        placeholder='예: 고객 요청으로 배송 취소'
+                      />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TableContainer component={Paper} elevation={0}>
+            <Table size="medium">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>수령인 정보</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>수령인 이름</TableCell>
+                  <TableCell>{editableDelivery.recipientName}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>수령인 연락처</TableCell>
+                  <TableCell>{editableDelivery.recipientPhone}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>우편번호</TableCell>
+                  <TableCell colSpan={3}>{editableDelivery.recipientZipcode}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>주소</TableCell>
+                  <TableCell colSpan={3}>{`${editableDelivery.recipientAddress} ${editableDelivery.recipientAddressDetail}`}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TableContainer component={Paper} elevation={0}>
+            <Table size="medium">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={4} sx={{ bgcolor: 'grey.200', fontWeight: 700 }}>상품 정보 및 생성일</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>품목</TableCell>
+                  <TableCell>{editableDelivery.item}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>무게(kg)</TableCell>
+                  <TableCell>{editableDelivery.weight}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>배송 메시지</TableCell>
+                  <TableCell colSpan={3}>{editableDelivery.message || "-"}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>생성일</TableCell>
+                  <TableCell>{editableDelivery.createdAt}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>수정일</TableCell>
+                  <TableCell>{editableDelivery.updatedAt}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Stack>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDeleteClick} color='error'>삭제</Button>
+      <DialogActions sx={{ p: 2 }}>
+        <div style={{ flex: '1 0 0' }} />
         {isEditing && (
           <Button onClick={handleCancelClick}>취소</Button>
         )}
-        <Button onClick={handleUpdateClick} variant='contained'>
+        <Button onClick={handleUpdateClick} variant="contained">
           {isEditing ? '상태 저장' : '상태 수정'}
         </Button>
-        <Button onClick={onClose}>닫기</Button>
+        <Button onClick={handleDeleteClick} color="error">삭제</Button>
       </DialogActions>
     </Dialog >
   )
 }
 
-export default DeliveryDetailModal
+export default DeliveryDetailModal;

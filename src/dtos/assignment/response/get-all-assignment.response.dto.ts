@@ -4,10 +4,10 @@ export interface GetAllAssignmentResponseDto {
     id: number;
     driverId: number;
     vehicleId: number;
-    name: string;
+    driverName: string;
     isPrimary: boolean;
     status: AssignmentStatus;
-    
+
     createdAt: string;
     updatedAt: string;
 }
