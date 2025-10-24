@@ -20,7 +20,7 @@ import AllowanceTypeLogsModal from "../../components/allowanceTypeLog/AllowanceT
 function AllAllowanceTypeListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDc4MzgyOSwiZXhwIjoxNzYwODE5ODI5fQ.1BSTVpRVaW8C7G0rNUkSMbSih6Tk5y-YwDGEZLk_xAg";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI4MDU4MywiZXhwIjoxNzYxMzE2NTgzfQ.5Vh1Zv8BOVbryHuJt4bOtqrmA_G2GX1TJ5qCT2zm87A";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);

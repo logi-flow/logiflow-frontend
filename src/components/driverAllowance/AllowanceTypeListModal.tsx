@@ -19,7 +19,7 @@ interface Props {
 function AllowanceTypeListModal({ open, loading, onClose, onConfirm }: Props) {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTAxNDIyNiwiZXhwIjoxNzYxMDUwMjI2fQ.5hDqK15Vh0pzZIxRfGNVUlwbhsQHuB7SDQFhEdTfApc";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTMxNzIxNCwiZXhwIjoxNzYxMzUzMjE0fQ.VT_9aUXAujVF6HeXS5YbB8ORkqkwE9oEhcpB7wZ12pw";
   const [listLoading, setListLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailAllowanceType, setDetailAllowanceType] = useState<GetAllowanceTypeDetailResponseDto>();
