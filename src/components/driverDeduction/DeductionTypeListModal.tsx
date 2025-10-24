@@ -1,27 +1,29 @@
-import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useEffect, useState, type ChangeEvent } from "react";
 import ConfirmModal from "../ConfirmModal";
 import type PageDto from "../../dtos/page.dto";
-import { getAllDriver } from "../../apis/driver/driver.apis";
-import type { GetDriverDetailResponseDto } from "../../dtos/driver/response/get-driver-detail.response.dto";
+import type { GetDeductionTypeDetailResponseDto } from "../../dtos/deductionType/response/get-deduction-type-detail.response.dto";
+import { getAllDeductionType, getDeductionTypeDetail } from "../../apis/deductionType/deduction-type.apis";
+import ViewDeductionTypeDetailModal from "../deductionType/ViewDeductionTypeDetailModal";
 // import { useCookies } from "react-cookie";
 
 interface Props {
   open: boolean;
   loading: boolean;
   onClose: () => void;
-  onConfirm: (driver: GetDriverDetailResponseDto) => void;
+  onConfirm: (deductionType: GetDeductionTypeDetailResponseDto) => void;
 }
 
-function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
+function DeductionTypeListModal({ open, loading, onClose, onConfirm }: Props) {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI4MDU4MywiZXhwIjoxNzYxMzE2NTgzfQ.5Vh1Zv8BOVbryHuJt4bOtqrmA_G2GX1TJ5qCT2zm87A";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTMxNzIxNCwiZXhwIjoxNzYxMzUzMjE0fQ.VT_9aUXAujVF6HeXS5YbB8ORkqkwE9oEhcpB7wZ12pw";
   const [listLoading, setListLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState<GetDriverDetailResponseDto | null>(null);
+  const [detailDeductionType, setDetailDeductionType] = useState<GetDeductionTypeDetailResponseDto>();
+  const [selectedDeductionType, setSelectedDeductionType] = useState<GetDeductionTypeDetailResponseDto | null>(null);
   const [listData, setListData] = useState<PageDto> ({
     content: [],
     number: 0,
@@ -42,57 +44,57 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
   
 
   useEffect(() => { 
-      fetchAllDrivers();
+      fetchAllDeductionTypes();
     }, [page, accessToken]);
 
-  const fetchAllDrivers = async () =>  {
+  const fetchAllDeductionTypes = async () =>  {
       if (!accessToken || listLoading) return;
           
       try {
         setListLoading(true);
   
-        const response = await getAllDriver(page, size, sort, accessToken);
+        const response = await getAllDeductionType(page, size, sort, accessToken);
         const { code, message, data } = response;
         
         if (code === "SU" && data) {
           setListData(data);
         } else {
-          console.error("기사 전체 조회 실패: ", message);
-          alert("기사 전체 조회 실패: " + message);
+          console.error("수당 항목 리스트 조회 실패: ", message);
+          alert("수당 항목 리스트 조회 실패: " + message);
         }
       } catch (e) {
-        console.error("기사 전체 조회 중 에러 발생: ", e);
-        alert("기사 전체 조회 중 에러 발생: " + e);
+        console.error("수당 항목 리스트 조회 중 에러 발생: ", e);
+        alert("수당 항목 리스트 조회 중 에러 발생: " + e);
       } finally {
         setListLoading(false);
       }
     };
 
-  // const handleDetail = async (driverId: number) => {
-  //   if (!accessToken || detailLoading) return;
+  const handleDetail = async (deductionTypeId: number) => {
+    if (!accessToken || detailLoading) return;
 
-  //   setOpenDetailModal(true);
-  //   setSelectedPayroll(undefined);
+    setOpenDetailModal(true);
+    setDetailDeductionType(undefined);
 
-  //   try {
-  //     setDetailLoading(true);
+    try {
+      setDetailLoading(true);
       
-  //     const response = await getMyInfo(driverId, accessToken);
-  //     const { code, message, data } = response;
+      const response = await getDeductionTypeDetail(deductionTypeId, accessToken);
+      const { code, message, data } = response;
       
-  //     if (code === "SU" && data) {
-  //       setSelectedPayroll(data);
-  //     } else {
-  //       console.error("기사 급여대장 상세 조회 실패: ", message);
-  //       alert("기사 급여대장 상세 조회 실패: " + message);
-  //     }
-  //   } catch (e) {
-  //     console.error("기사 급여대장 상세 조회 중 에러 발생: ", e);
-  //     alert("기사 급여대장 상세 조회 중 에러 발생: " + e);
-  //   } finally {
-  //     setDetailLoading(false);
-  //   }
-  // };
+      if (code === "SU" && data) {
+        setDetailDeductionType(data);
+      } else {
+        console.error("수당 항목 상세 조회 실패: ", message);
+        alert("수당 항목 상세 조회 실패: " + message);
+      }
+    } catch (e) {
+      console.error("수당 항목 상세 조회 중 에러 발생: ", e);
+      alert("수당 항목 상세 조회 중 에러 발생: " + e);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
   const handleChangePage = (_: ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1);
@@ -103,27 +105,28 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
     onClose();
   };
 
-  const handleSelect = (driver: GetDriverDetailResponseDto) => {
+  const handleSelect = (deductionType: GetDeductionTypeDetailResponseDto) => {
     if (loading) return;
 
-    setSelectedDriver(driver);
+    setSelectedDeductionType(deductionType);
     setOpenConfirmModal(true);
   };
 
   const handleConfirmSelect = () => {
-    // if (isCodeEmpty || isNameEmpty || loading) return;
-    if (!selectedDriver || loading) return;
+    if (!selectedDeductionType || loading) return;
 
-    setSelectedDriver(selectedDriver);
-    onConfirm(selectedDriver);
+    setSelectedDeductionType(selectedDeductionType);
+    onConfirm(selectedDeductionType);
     setOpenConfirmModal(false);
-    setSelectedDriver(null);
+    setSelectedDeductionType(null);
   };
 
   const handleConfirmModalClose = () => {
     setOpenConfirmModal(false);
-    setSelectedDriver(null);
+    setSelectedDeductionType(null);
   };
+
+  const handleDetailModalClose = () => setOpenDetailModal(false);
 
   return (
     <Dialog
@@ -135,7 +138,7 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
     >
       <DialogTitle>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          기사 조회
+          공제 항목 조회
           <IconButton onClick={handleClose}>
             <CloseIcon sx={{ fontSize: 30 }} />
           </IconButton>
@@ -156,10 +159,10 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">순번</TableCell>
-                      <TableCell align="center">고유번호</TableCell>
-                      <TableCell align="center">이름</TableCell>
-                      <TableCell align="center">휴대폰번호</TableCell>
-                      {/* <TableCell align="center">상세 조회</TableCell> */}
+                      <TableCell align="center">코드명</TableCell>
+                      <TableCell align="center">항목명</TableCell>
+                      <TableCell align="center">사용 여부</TableCell>
+                      <TableCell align="center">상세 조회</TableCell>
                       <TableCell align="center">선택</TableCell>
                     </TableRow>
                   </TableHead>
@@ -175,16 +178,21 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
 
                     {!loading && listData.content.map((row, index) => {
                       return (
-                        <TableRow hover sx={{ cursor: 'pointer' }} key={row.driverId}>
-                          <TableCell align="center">{listData.number * size + index + 1}</TableCell>
-                          <TableCell align="center">{row.driverId}</TableCell>
+                        <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
+                         <TableCell align="center">{page * size + index + 1}</TableCell>
+                          <TableCell align="center">{row.code}</TableCell>
                           <TableCell align="center">{row.name}</TableCell>
-                          <TableCell align="center">{row.phoneNumber}</TableCell>
-                          {/* <TableCell align="center">
+                          <TableCell align="center">
+                            <Chip
+                              label={row.active ? "사용" : "미사용"}
+                              color={row.active ? "success" : "error"}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
                             <IconButton onClick={() => handleDetail(row.id)}>
                               <EditNoteIcon />
                             </IconButton>
-                          </TableCell> */}
+                          </TableCell>
                           <TableCell align="center">
                             <Button 
                               sx={{ width: '70px', height: '100%' }}
@@ -229,8 +237,15 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
         onConfirm={handleConfirmSelect}
         onClose={handleConfirmModalClose}
       />
+
+      <ViewDeductionTypeDetailModal
+        deductionType={detailDeductionType}
+        open={openDetailModal}
+        loading={detailLoading}
+        onClose={handleDetailModalClose}
+      />
     </Dialog>
   )
 }
 
-export default DriverListModal;
+export default DeductionTypeListModal;
