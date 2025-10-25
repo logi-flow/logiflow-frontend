@@ -19,7 +19,7 @@ interface Props {
 function DeductionTypeListModal({ open, loading, onClose, onConfirm }: Props) {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTMxNzIxNCwiZXhwIjoxNzYxMzUzMjE0fQ.VT_9aUXAujVF6HeXS5YbB8ORkqkwE9oEhcpB7wZ12pw";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTM2ODUwMywiZXhwIjoxNzYxNDA0NTAzfQ.eELS15CtpgUYE4xz80PcY8OwzbxIohsovE7O9WMulbk";
   const [listLoading, setListLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailDeductionType, setDetailDeductionType] = useState<GetDeductionTypeDetailResponseDto>();
@@ -59,12 +59,12 @@ function DeductionTypeListModal({ open, loading, onClose, onConfirm }: Props) {
         if (code === "SU" && data) {
           setListData(data);
         } else {
-          console.error("수당 항목 리스트 조회 실패: ", message);
-          alert("수당 항목 리스트 조회 실패: " + message);
+          console.error("공제 항목 리스트 조회 실패: ", message);
+          alert("공제 항목 리스트 조회 실패: " + message);
         }
       } catch (e) {
-        console.error("수당 항목 리스트 조회 중 에러 발생: ", e);
-        alert("수당 항목 리스트 조회 중 에러 발생: " + e);
+        console.error("공제 항목 리스트 조회 중 에러 발생: ", e);
+        alert("공제 항목 리스트 조회 중 에러 발생: " + e);
       } finally {
         setListLoading(false);
       }
@@ -85,12 +85,12 @@ function DeductionTypeListModal({ open, loading, onClose, onConfirm }: Props) {
       if (code === "SU" && data) {
         setDetailDeductionType(data);
       } else {
-        console.error("수당 항목 상세 조회 실패: ", message);
-        alert("수당 항목 상세 조회 실패: " + message);
+        console.error("공제 항목 상세 조회 실패: ", message);
+        alert("공제 항목 상세 조회 실패: " + message);
       }
     } catch (e) {
-      console.error("수당 항목 상세 조회 중 에러 발생: ", e);
-      alert("수당 항목 상세 조회 중 에러 발생: " + e);
+      console.error("공제 항목 상세 조회 중 에러 발생: ", e);
+      alert("공제 항목 상세 조회 중 에러 발생: " + e);
     } finally {
       setDetailLoading(false);
     }
@@ -197,7 +197,6 @@ function DeductionTypeListModal({ open, loading, onClose, onConfirm }: Props) {
                             <Button 
                               sx={{ width: '70px', height: '100%' }}
                               variant="contained"
-                              // size="large"
                               disabled={listLoading}
                               onClick={() => handleSelect(row)}
                             >

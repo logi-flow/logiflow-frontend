@@ -27,7 +27,7 @@ function ViewDeductionTypeDetailModal({ deductionType, open, loading, onClose }:
     >
       <DialogTitle>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          수당 항목 상세 조회
+          공제 항목 상세 조회
           <IconButton onClick={handleClose}>
             <CloseIcon sx={{ fontSize: 30 }} />
           </IconButton>
@@ -46,7 +46,7 @@ function ViewDeductionTypeDetailModal({ deductionType, open, loading, onClose }:
                 <TableBody>
                   <TableRow>
                     <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
-                      수당 항목 정보
+                      공제 항목 정보
                     </TableCell>
                   </TableRow>
 

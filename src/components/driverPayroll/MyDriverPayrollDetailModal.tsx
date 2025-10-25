@@ -135,52 +135,7 @@ function MyDriverPayrollDetailModal({ payroll, open, loading, onClose }: Props) 
                 </TableBody>
               </Table>
 
-              <Table size="medium" sx={{ border: '1px solid lightGray' }}>
-                <TableHead>
-                  <TableCell align="center">순번</TableCell>
-                  <TableCell align="center">코드명</TableCell>
-                  <TableCell align="center">항목명</TableCell>
-                  <TableCell align="center">수량(일수)</TableCell>
-                  <TableCell align="center">단가(원)</TableCell>
-                  <TableCell align="center">합계(원)</TableCell>
-                  <TableCell align="center">메모</TableCell>  
-                </TableHead>
-                <TableBody>
-                  {!loading && (!payroll.allowanceItems || payroll.allowanceItems.length === 0) && (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        조회 결과가 없습니다.
-                      </TableCell>
-                    </TableRow>
-                  )}
-
-                  {!loading && payroll.allowanceItems.map((row, index) => {
-                    return (
-                      <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">{row.allowanceTypeCode}</TableCell>
-                        <TableCell align="center">{row.allowanceTypeName}</TableCell>
-                        <TableCell align="center">{row.quantity}</TableCell>
-                        <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
-                        <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
-                        <TableCell align="center">{row.memo}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <TableContainer component={Paper} elevation={0}>
-              <Table size="medium" sx={{ border: '1px solid lightGray' }}>
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>공제 내역</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-
-              {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) ? (
+              {!loading && (!payroll.allowanceItems || payroll.allowanceItems.length === 0) ? (
                 <Table size="medium">
                   <TableBody>
                     <TableRow>
@@ -191,10 +146,9 @@ function MyDriverPayrollDetailModal({ payroll, open, loading, onClose }: Props) 
                   </TableBody>
                 </Table>
               ) : (
-                <Table size="medium">
+                <Table size="medium" sx={{ border: '1px solid lightGray' }}>
                   <TableHead>
                     <TableCell align="center">순번</TableCell>
-                    <TableCell align="center">코드명</TableCell>
                     <TableCell align="center">항목명</TableCell>
                     <TableCell align="center">수량(일수)</TableCell>
                     <TableCell align="center">단가(원)</TableCell>
@@ -202,20 +156,11 @@ function MyDriverPayrollDetailModal({ payroll, open, loading, onClose }: Props) 
                     <TableCell align="center">메모</TableCell>  
                   </TableHead>
                   <TableBody>
-                    {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) && (
-                      <TableRow>
-                        <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                          조회 결과가 없습니다.
-                        </TableCell>
-                      </TableRow>
-                    )}
-
-                    {!loading && payroll.deductionItems.map((row, index) => {
+                    {!loading && payroll.allowanceItems.map((row, index) => {
                       return (
                         <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
                           <TableCell align="center">{index + 1}</TableCell>
-                          <TableCell align="center">{row.deductionTypeCode}</TableCell>
-                          <TableCell align="center">{row.deductionTypeName}</TableCell>
+                          <TableCell align="center">{row.allowanceTypeName}</TableCell>
                           <TableCell align="center">{row.quantity}</TableCell>
                           <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
                           <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
@@ -229,22 +174,50 @@ function MyDriverPayrollDetailModal({ payroll, open, loading, onClose }: Props) 
             </TableContainer>
 
             <TableContainer component={Paper} elevation={0}>
-              <Table size="medium">
+              <Table size="medium" sx={{ border: '1px solid lightGray' }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>
-                      입력 정보
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>등록일</TableCell>
-                    <TableCell sx={{ width: '20%' }}>{payroll.createdAt}</TableCell>
-                    <TableCell sx={{ fontWeight: 600, width: '30%' }}>수정일</TableCell>
-                    <TableCell sx={{ width: '20%' }}>{payroll.updatedAt}</TableCell>
+                    <TableCell colSpan={4} sx={{ bgcolor: 'lightGray', fontWeight: 700 }}>공제 내역</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
+              
+              {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) ? (
+                <Table size="medium">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center">
+                        조회 결과가 없습니다.
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              ) : (
+                <Table size="medium" sx={{ border: '1px solid lightGray' }}>
+                  <TableHead>
+                    <TableCell align="center">순번</TableCell>
+                    <TableCell align="center">항목명</TableCell>
+                    <TableCell align="center">수량(일수)</TableCell>
+                    <TableCell align="center">단가(원)</TableCell>
+                    <TableCell align="center">합계(원)</TableCell>
+                    <TableCell align="center">메모</TableCell>  
+                  </TableHead>
+                  <TableBody>
+                    {!loading && payroll.deductionItems.map((row, index) => {
+                      return (
+                        <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
+                          <TableCell align="center">{index + 1}</TableCell>
+                          <TableCell align="center">{row.deductionTypeName}</TableCell>
+                          <TableCell align="center">{row.quantity}</TableCell>
+                          <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
+                          <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
+                          <TableCell align="center">{row.memo}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
             </TableContainer>
           </Stack>
         ) : (

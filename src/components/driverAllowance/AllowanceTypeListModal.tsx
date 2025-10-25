@@ -197,7 +197,6 @@ function AllowanceTypeListModal({ open, loading, onClose, onConfirm }: Props) {
                             <Button 
                               sx={{ width: '70px', height: '100%' }}
                               variant="contained"
-                              // size="large"
                               disabled={listLoading}
                               onClick={() => handleSelect(row)}
                             >
