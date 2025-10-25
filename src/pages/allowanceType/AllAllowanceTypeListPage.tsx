@@ -20,7 +20,7 @@ import AllowanceTypeLogsModal from "../../components/allowanceTypeLog/AllowanceT
 function AllAllowanceTypeListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI4MDU4MywiZXhwIjoxNzYxMzE2NTgzfQ.5Vh1Zv8BOVbryHuJt4bOtqrmA_G2GX1TJ5qCT2zm87A";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTM2ODUwMywiZXhwIjoxNzYxNDA0NTAzfQ.eELS15CtpgUYE4xz80PcY8OwzbxIohsovE7O9WMulbk";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -333,27 +333,27 @@ function AllAllowanceTypeListPage() {
               </Table>
             </TableContainer>
           </Paper>
+          {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+            <Stack spacing={2} alignItems="center">
+              <Pagination
+                count={listData.totalPages}
+                page={page + 1}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Stack>
+          )}
         </Stack>
 
         <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
           <Button variant="outlined" onClick={handleLog}>
-              수정 이력 조회
-            </Button>
+            수정 이력 조회
+          </Button>
         </Stack>
 
-        {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
-          <Stack spacing={2} alignItems="center">
-            <Pagination
-              count={listData.totalPages}
-              page={page + 1}
-              onChange={handleChangePage}
-              variant="outlined"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
 
         <CreateAllowanceTypeModal
           open={openCreateModal}

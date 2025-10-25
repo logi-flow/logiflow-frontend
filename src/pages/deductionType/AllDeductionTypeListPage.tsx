@@ -333,27 +333,27 @@ function AllDeductionTypeListPage() {
               </Table>
             </TableContainer>
           </Paper>
+          {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+            <Stack spacing={2} alignItems="center">
+              <Pagination
+                count={listData.totalPages}
+                page={page + 1}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Stack>
+          )}
         </Stack>
 
         <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
           <Button variant="outlined" onClick={handleLog}>
-              수정 이력 조회
-            </Button>
+            수정 이력 조회
+          </Button>
         </Stack>
 
-        {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
-          <Stack spacing={2} alignItems="center">
-            <Pagination
-              count={listData.totalPages}
-              page={page + 1}
-              onChange={handleChangePage}
-              variant="outlined"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
 
         <CreateDeductionTypeModal
           open={openCreateModal}
