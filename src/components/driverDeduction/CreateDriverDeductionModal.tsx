@@ -28,7 +28,7 @@ function CreateDriverDeductionModal({ open, loading, onClose, onConfirm }: Props
   const [touched, setTouched] = useState({ deductionTypeId: false, quantity: false, unitPrice: false });
   const isDeductionTypeIdEmpty = form.deductionTypeId.trim() === "";
   const isDeductionTypeIdInvalid = touched.deductionTypeId && isDeductionTypeIdEmpty;
-  const deductionTypeIdHelperText = isDeductionTypeIdInvalid ? "수당 항목을 선택해 주세요." : "";
+  const deductionTypeIdHelperText = isDeductionTypeIdInvalid ? "공제 항목을 선택해 주세요." : "";
   const isQuantityEmpty = form.quantity.trim() === "";
   const isQuantityInvalid = touched.quantity && isQuantityEmpty;
   const quantityHelperText = isQuantityInvalid ? "수량(일수)를 입력해 주세요." : "";

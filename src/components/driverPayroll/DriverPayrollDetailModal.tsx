@@ -538,129 +538,133 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollUp
                   </TableRow>
                 </TableBody>
               </Table>
-
-              <Table size="medium" sx={{ border: '1px solid lightGray' }}>
-                {!editAllowance && (
-                  <caption>수당 총액: {payroll.totalAllowance.toLocaleString()} 원</caption>
-                )}
-                <TableHead>
-                    {!editAllowance ? (
-                      <TableRow>
-                        <TableCell align="center">순번</TableCell>
-                        <TableCell align="center">코드명</TableCell>
-                        <TableCell align="center">항목명</TableCell>
-                        <TableCell align="center">수량(일수)</TableCell>
-                        <TableCell align="center">단가(원)</TableCell>
-                        <TableCell align="center">합계(원)</TableCell>
-                        <TableCell align="center">메모</TableCell>  
-                      </TableRow>
-                    ) : (
-                        <TableRow>
-                        <TableCell align="center">순번</TableCell>
-                        <TableCell align="center">코드명</TableCell>
-                        <TableCell align="center">항목명</TableCell>
-                        <TableCell align="center">수량(일수)</TableCell>
-                        <TableCell align="center">단가(원)</TableCell>
-                        <TableCell align="center">합계(원)</TableCell>
-                        <TableCell align="center">메모</TableCell>
-                        <TableCell align="center">제거</TableCell>
-                      </TableRow>
-                    )}
-                </TableHead>
-                <TableBody>
-                  {!payroll.allowanceItems || payroll.allowanceItems.length === 0 && (
+              
+              {!loading && (!payroll.allowanceItems || payroll.allowanceItems.length === 0) ? (
+                <Table size="medium">
+                  <TableBody>
                     <TableRow>
-                      <TableCell colSpan={editAllowance ? 7 : 8} align="center">
+                      <TableCell align="center">
                         조회 결과가 없습니다.
                       </TableCell>
                     </TableRow>
+                  </TableBody>
+                </Table>
+              ) : (
+                <Table size="medium" sx={{ border: '1px solid lightGray' }}>
+                  {!editAllowance && (
+                    <caption>수당 총액: {payroll.totalAllowance.toLocaleString()} 원</caption>
                   )}
+                  <TableHead>
+                      {!editAllowance ? (
+                        <TableRow>
+                          <TableCell align="center">순번</TableCell>
+                          <TableCell align="center">코드명</TableCell>
+                          <TableCell align="center">항목명</TableCell>
+                          <TableCell align="center">수량(일수)</TableCell>
+                          <TableCell align="center">단가(원)</TableCell>
+                          <TableCell align="center">합계(원)</TableCell>
+                          <TableCell align="center">메모</TableCell>  
+                        </TableRow>
+                      ) : (
+                          <TableRow>
+                          <TableCell align="center">순번</TableCell>
+                          <TableCell align="center">코드명</TableCell>
+                          <TableCell align="center">항목명</TableCell>
+                          <TableCell align="center">수량(일수)</TableCell>
+                          <TableCell align="center">단가(원)</TableCell>
+                          <TableCell align="center">합계(원)</TableCell>
+                          <TableCell align="center">메모</TableCell>
+                          <TableCell align="center">제거</TableCell>
+                        </TableRow>
+                      )}
+                  </TableHead>
+                  <TableBody>
+                    {localAllowanceItems.map((row, index) => {
+                      if (!editAllowance) {
+                        return (
+                          <TableRow key={row.id}>
+                            <TableCell align="center">{index + 1}</TableCell>
+                            <TableCell align="center">{row.allowanceTypeCode}</TableCell>
+                            <TableCell align="center">{row.allowanceTypeName}</TableCell>
+                            <TableCell align="center">{row.quantity}</TableCell>
+                            <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
+                            <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
+                            <TableCell align="center">{row.memo}</TableCell>
+                          </TableRow>
+                        );
+                      }
 
-                  {localAllowanceItems.map((row, index) => {
-                    if (!editAllowance) {
+                      const formRow = updatedAllowanceForm.find((item) => item.id === row.id);
+                      const amount = (formRow?.quantity ?? 0) * (formRow?.unitPrice ?? 0)
+
                       return (
                         <TableRow key={row.id}>
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell align="center">{row.allowanceTypeCode}</TableCell>
                           <TableCell align="center">{row.allowanceTypeName}</TableCell>
-                          <TableCell align="center">{row.quantity}</TableCell>
-                          <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
-                          <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
-                          <TableCell align="center">{row.memo}</TableCell>
+                          <TableCell align="center">
+                            <NumericFormat
+                              customInput={TextField}
+                              required
+                              size="small"
+                              id="quantity"
+                              name="quantity"
+                              label="수량 (일수)"
+                              thousandSeparator=","
+                              allowLeadingZeros={false}
+                              inputMode="numeric"
+                              InputLabelProps={{ shrink: true }}
+                              value={formRow?.quantity ?? 0}
+                              fullWidth
+                              onValueChange={(values) => handleValueAllowanceChange(row.id, values, "quantity")}
+                              error={isQuantityEmpty(formRow)}
+                              helperText={isQuantityEmpty(formRow) ? "수량(일수)를 입력해 주세요." : ""}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <NumericFormat
+                              customInput={TextField}
+                              required
+                              size="small"
+                              id="unitPrice"
+                              name="unitPrice"
+                              label="단가"
+                              thousandSeparator=","
+                              allowLeadingZeros={false}
+                              inputMode="numeric"
+                              InputLabelProps={{ shrink: true }}
+                              value={formRow?.unitPrice ?? 0}
+                              fullWidth
+                              onValueChange={(values) => handleValueAllowanceChange(row.id, values, "unitPrice")}
+                              error={isUnitPriceEmpty(formRow!)}
+                              helperText={isUnitPriceEmpty(formRow!) ? "단가를 입력해 주세요." : ""}
+                            />
+                          </TableCell>
+                          <TableCell align="center">{amount.toLocaleString()}</TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              size="small"
+                              id="memo"
+                              name="memo"
+                              label="메모"
+                              type="text"
+                              inputMode="text"
+                              value={formRow?.memo ?? ""}
+                              fullWidth
+                              onChange={(e) => handleAllowanceFieldChange(e, row.id)}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <IconButton color="error" onClick={() => handleDeleteAllowance(row.id)}>
+                              <RemoveCircleIcon />
+                            </IconButton>
+                          </TableCell>
                         </TableRow>
                       );
-                    }
-
-                    const formRow = updatedAllowanceForm.find((item) => item.id === row.id);
-                    const amount = (formRow?.quantity ?? 0) * (formRow?.unitPrice ?? 0)
-
-                    return (
-                      <TableRow key={row.id}>
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">{row.allowanceTypeCode}</TableCell>
-                        <TableCell align="center">{row.allowanceTypeName}</TableCell>
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            required
-                            size="small"
-                            id="quantity"
-                            name="quantity"
-                            label="수량 (일수)"
-                            thousandSeparator=","
-                            allowLeadingZeros={false}
-                            inputMode="numeric"
-                            InputLabelProps={{ shrink: true }}
-                            value={formRow?.quantity ?? 0}
-                            fullWidth
-                            onValueChange={(values) => handleValueAllowanceChange(row.id, values, "quantity")}
-                            error={isQuantityEmpty(formRow)}
-                            helperText={isQuantityEmpty(formRow) ? "수량(일수)를 입력해 주세요." : ""}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            required
-                            size="small"
-                            id="unitPrice"
-                            name="unitPrice"
-                            label="단가"
-                            thousandSeparator=","
-                            allowLeadingZeros={false}
-                            inputMode="numeric"
-                            InputLabelProps={{ shrink: true }}
-                            value={formRow?.unitPrice ?? 0}
-                            fullWidth
-                            onValueChange={(values) => handleValueAllowanceChange(row.id, values, "unitPrice")}
-                            error={isUnitPriceEmpty(formRow!)}
-                            helperText={isUnitPriceEmpty(formRow!) ? "단가를 입력해 주세요." : ""}
-                          />
-                        </TableCell>
-                        <TableCell align="center">{amount.toLocaleString()}</TableCell>
-                        <TableCell align="center">
-                          <TextField
-                            size="small"
-                            id="memo"
-                            name="memo"
-                            label="메모"
-                            type="text"
-                            inputMode="text"
-                            value={formRow?.memo ?? ""}
-                            fullWidth
-                            onChange={(e) => handleAllowanceFieldChange(e, row.id)}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton color="error" onClick={() => handleDeleteAllowance(row.id)}>
-                            <RemoveCircleIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+                    })}
+                  </TableBody>
+                </Table>
+              )}
             </TableContainer>
 
             <TableContainer component={Paper} elevation={0}>
@@ -726,128 +730,133 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollUp
                   </TableRow>
                 </TableBody>
               </Table>
-              <Table size="medium" sx={{ border: '1px solid lightGray' }}>
-                {!editDeduction && (
-                  <caption>공제 총액: {payroll.totalDeduction.toLocaleString()} 원</caption>
-                )}
-                <TableHead>
-                  {!editDeduction ? (
+
+              {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) ? (
+                <Table size="medium">
+                  <TableBody>
                     <TableRow>
-                      <TableCell align="center">순번</TableCell>
-                      <TableCell align="center">코드명</TableCell>
-                      <TableCell align="center">항목명</TableCell>
-                      <TableCell align="center">수량(일수)</TableCell>
-                      <TableCell align="center">단가(원)</TableCell>
-                      <TableCell align="center">합계(원)</TableCell>
-                      <TableCell align="center">메모</TableCell>  
-                    </TableRow>
-                  ) : (
-                      <TableRow>
-                      <TableCell align="center">순번</TableCell>
-                      <TableCell align="center">코드명</TableCell>
-                      <TableCell align="center">항목명</TableCell>
-                      <TableCell align="center">수량(일수)</TableCell>
-                      <TableCell align="center">단가(원)</TableCell>
-                      <TableCell align="center">합계(원)</TableCell>
-                      <TableCell align="center">메모</TableCell>
-                      <TableCell align="center">제거</TableCell>
-                    </TableRow>
-                  )}
-                </TableHead>
-                <TableBody>
-                  {!loading && (!payroll.deductionItems || payroll.deductionItems.length === 0) && (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                      <TableCell align="center">
                         조회 결과가 없습니다.
                       </TableCell>
                     </TableRow>
+                  </TableBody>
+                </Table>
+              ) : (
+                <Table size="medium" sx={{ border: '1px solid lightGray' }}>
+                  {!editDeduction && (
+                    <caption>공제 총액: {payroll.totalDeduction.toLocaleString()} 원</caption>
                   )}
+                  <TableHead>
+                    {!editDeduction ? (
+                      <TableRow>
+                        <TableCell align="center">순번</TableCell>
+                        <TableCell align="center">코드명</TableCell>
+                        <TableCell align="center">항목명</TableCell>
+                        <TableCell align="center">수량(일수)</TableCell>
+                        <TableCell align="center">단가(원)</TableCell>
+                        <TableCell align="center">합계(원)</TableCell>
+                        <TableCell align="center">메모</TableCell>  
+                      </TableRow>
+                    ) : (
+                        <TableRow>
+                        <TableCell align="center">순번</TableCell>
+                        <TableCell align="center">코드명</TableCell>
+                        <TableCell align="center">항목명</TableCell>
+                        <TableCell align="center">수량(일수)</TableCell>
+                        <TableCell align="center">단가(원)</TableCell>
+                        <TableCell align="center">합계(원)</TableCell>
+                        <TableCell align="center">메모</TableCell>
+                        <TableCell align="center">제거</TableCell>
+                      </TableRow>
+                    )}
+                  </TableHead>
+                  <TableBody>
+                    {localDeductionItems.map((row, index) => {
+                      if (!editDeduction) {
+                        return (
+                          <TableRow key={row.id}>
+                            <TableCell align="center">{index + 1}</TableCell>
+                            <TableCell align="center">{row.deductionTypeCode}</TableCell>
+                            <TableCell align="center">{row.deductionTypeName}</TableCell>
+                            <TableCell align="center">{row.quantity}</TableCell>
+                            <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
+                            <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
+                            <TableCell align="center">{row.memo}</TableCell>
+                          </TableRow>
+                        );
+                      }
 
-                  {localDeductionItems.map((row, index) => {
-                    if (!editDeduction) {
+                      const formRow = updatedDeductionForm.find((item) => item.id === row.id);
+                      const amount = (formRow?.quantity ?? 0) * (formRow?.unitPrice ?? 0)
+
                       return (
                         <TableRow key={row.id}>
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell align="center">{row.deductionTypeCode}</TableCell>
                           <TableCell align="center">{row.deductionTypeName}</TableCell>
-                          <TableCell align="center">{row.quantity}</TableCell>
-                          <TableCell align="center">{row.unitPrice.toLocaleString()}</TableCell>
-                          <TableCell align="center">{row.amount.toLocaleString()}</TableCell>
-                          <TableCell align="center">{row.memo}</TableCell>
+                          <TableCell align="center">
+                            <NumericFormat
+                              customInput={TextField}
+                              required
+                              size="small"
+                              id="quantity"
+                              name="quantity"
+                              label="수량 (일수)"
+                              thousandSeparator=","
+                              allowLeadingZeros={false}
+                              inputMode="numeric"
+                              InputLabelProps={{ shrink: true }}
+                              value={formRow?.quantity ?? 0}
+                              fullWidth
+                              onValueChange={(values) => handleValueDeductionChange(row.id, values, "quantity")}
+                              error={isQuantityEmpty(formRow)}
+                              helperText={isQuantityEmpty(formRow) ? "수량(일수)를 입력해 주세요." : ""}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <NumericFormat
+                              customInput={TextField}
+                              required
+                              size="small"
+                              id="unitPrice"
+                              name="unitPrice"
+                              label="단가"
+                              thousandSeparator=","
+                              allowLeadingZeros={false}
+                              inputMode="numeric"
+                              InputLabelProps={{ shrink: true }}
+                              value={formRow?.unitPrice ?? 0}
+                              fullWidth
+                              onValueChange={(values) => handleValueDeductionChange(row.id, values, "unitPrice")}
+                              error={isUnitPriceEmpty(formRow!)}
+                              helperText={isUnitPriceEmpty(formRow!) ? "단가를 입력해 주세요." : ""}
+                            />
+                          </TableCell>
+                          <TableCell align="center">{amount.toLocaleString()}</TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              size="small"
+                              id="memo"
+                              name="memo"
+                              label="메모"
+                              type="text"
+                              inputMode="text"
+                              value={formRow?.memo ?? ""}
+                              fullWidth
+                              onChange={(e) => handleDeductionFieldChange(e, row.id)}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <IconButton color="error" onClick={() => handleDeleteDeduction(row.id)}>
+                              <RemoveCircleIcon />
+                            </IconButton>
+                          </TableCell>
                         </TableRow>
                       );
-                    }
-
-                    const formRow = updatedDeductionForm.find((item) => item.id === row.id);
-                    const amount = (formRow?.quantity ?? 0) * (formRow?.unitPrice ?? 0)
-
-                    return (
-                      <TableRow key={row.id}>
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">{row.deductionTypeCode}</TableCell>
-                        <TableCell align="center">{row.deductionTypeName}</TableCell>
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            required
-                            size="small"
-                            id="quantity"
-                            name="quantity"
-                            label="수량 (일수)"
-                            thousandSeparator=","
-                            allowLeadingZeros={false}
-                            inputMode="numeric"
-                            InputLabelProps={{ shrink: true }}
-                            value={formRow?.quantity ?? 0}
-                            fullWidth
-                            onValueChange={(values) => handleValueDeductionChange(row.id, values, "quantity")}
-                            error={isQuantityEmpty(formRow)}
-                            helperText={isQuantityEmpty(formRow) ? "수량(일수)를 입력해 주세요." : ""}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            required
-                            size="small"
-                            id="unitPrice"
-                            name="unitPrice"
-                            label="단가"
-                            thousandSeparator=","
-                            allowLeadingZeros={false}
-                            inputMode="numeric"
-                            InputLabelProps={{ shrink: true }}
-                            value={formRow?.unitPrice ?? 0}
-                            fullWidth
-                            onValueChange={(values) => handleValueDeductionChange(row.id, values, "unitPrice")}
-                            error={isUnitPriceEmpty(formRow!)}
-                            helperText={isUnitPriceEmpty(formRow!) ? "단가를 입력해 주세요." : ""}
-                          />
-                        </TableCell>
-                        <TableCell align="center">{amount.toLocaleString()}</TableCell>
-                        <TableCell align="center">
-                          <TextField
-                            size="small"
-                            id="memo"
-                            name="memo"
-                            label="메모"
-                            type="text"
-                            inputMode="text"
-                            value={formRow?.memo ?? ""}
-                            fullWidth
-                            onChange={(e) => handleDeductionFieldChange(e, row.id)}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton color="error" onClick={() => handleDeleteDeduction(row.id)}>
-                            <RemoveCircleIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+                    })}
+                  </TableBody>
+                </Table>
+              )}
             </TableContainer>
 
             <TableContainer component={Paper} elevation={0}>
