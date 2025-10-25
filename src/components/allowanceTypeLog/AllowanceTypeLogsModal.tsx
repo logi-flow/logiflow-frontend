@@ -18,7 +18,7 @@ const logNameMap: Record<string, string> = {
   is_active: "사용 여부"
 }
 
-function AllowanceTypeLogsModal({log, open, loading, onClose, onChangePage }: Props) {
+function AllowanceTypeLogsModal({ log, open, loading, onClose, onChangePage }: Props) {
   const size = 20;
   const sort = "desc";
 

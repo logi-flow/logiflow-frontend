@@ -2,10 +2,10 @@ import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Pagin
 import CloseIcon from '@mui/icons-material/Close';
 import type PageDto from "../../dtos/page.dto";
 import { type ChangeEvent } from "react";
-import type { GetDeductionTypeUpdateLogResponseDto } from "../../dtos/deductionTypeLog/response/get-deduction-type-update-log.response.dto";
+import type { GetDriverDeductionUpdateLogResponseDto } from "../../dtos/driverDeductionLog/response/get-driver-deduction-update-log.response.dto";
 
 interface Props {
-  log: PageDto<GetDeductionTypeUpdateLogResponseDto>;
+  log: PageDto<GetDriverDeductionUpdateLogResponseDto>;
   open: boolean;
   loading: boolean;
   onClose: () => void;
@@ -13,12 +13,12 @@ interface Props {
 }
 
 const logNameMap: Record<string, string> = {
-  name: "항목명",
-  description: "설명",
-  is_active: "사용 여부"
+  quantity: "수량(일수)",
+  unit_price: "단가",
+  memo: "메모"
 }
 
-function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: Props) {
+function DriverDeductionLogsModal({ log, open, loading, onClose, onChangePage }: Props) {
   const size = 20;
   const sort = "desc";
 
@@ -42,7 +42,7 @@ function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: P
     >
       <DialogTitle>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          수정 이력 조회
+          공제 내역 수정 이력 조회
           <IconButton onClick={handleClose}>
             <CloseIcon sx={{ fontSize: 30 }} />
           </IconButton>
@@ -63,8 +63,12 @@ function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: P
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">순번</TableCell>
-                      <TableCell align="center">코드명</TableCell>
+                      <TableCell align="center">기사 고유번호</TableCell>
+                      <TableCell align="center">기사 이름</TableCell>
+                      <TableCell align="center">급여대장 고유번호</TableCell>
+                      <TableCell align="center">항목 코드명</TableCell>
                       <TableCell align="center">항목명</TableCell>
+                      <TableCell align="center">타입</TableCell>
                       <TableCell align="center">수정 전</TableCell>
                       <TableCell align="center">수정 후</TableCell>
                       <TableCell align="center">작업자 ID</TableCell>
@@ -75,7 +79,7 @@ function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: P
                   <TableBody>
                     {log.totalElements <= 0 && (
                       <TableRow>
-                        <TableCell colSpan={7} align="center">
+                        <TableCell colSpan={11} align="center">
                           조회 결과가 없습니다.
                         </TableCell>
                       </TableRow>
@@ -85,22 +89,14 @@ function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: P
                       return (
                         <TableRow hover sx={{ cursor: 'pointer' }} key={row.id}>
                           <TableCell align="center">{log.number * size + index + 1}</TableCell>
+                          <TableCell align="center">{row.driverId}</TableCell>
+                          <TableCell align="center">{row.driverName}</TableCell>
+                          <TableCell align="center">{row.payrollId}</TableCell>
                           <TableCell align="center">{row.code}</TableCell>
+                          <TableCell align="center">{row.name}</TableCell>
                           <TableCell align="center">{logNameMap[row.type] ?? row.type}</TableCell>
-                          <TableCell align="center">
-                            {row.type === "is_active"
-                              ? String(row.prevData) === "true"
-                                ? "사용"
-                                : "미사용"
-                              : row.prevData}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.type === "is_active"
-                              ? String(row.newData) === "true"
-                                ? "사용"
-                                : "미사용"
-                              : row.newData}
-                          </TableCell>
+                          <TableCell align="center">{row.prevData}</TableCell>
+                          <TableCell align="center">{row.newData}</TableCell>
                           <TableCell align="center">{row.changedByUsername}</TableCell>
                           <TableCell align="center">{row.createdAt}</TableCell>
                         </TableRow>
@@ -133,4 +129,4 @@ function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: P
   )
 }
 
-export default DeductionTypeLogsModal;
+export default DriverDeductionLogsModal;

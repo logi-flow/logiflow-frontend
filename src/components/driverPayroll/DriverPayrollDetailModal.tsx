@@ -281,10 +281,16 @@ function DriverPayrollDetailModal({ payroll, open, loading, onClose, onPayrollUp
     >
       <DialogTitle>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          급여대장 상세 조회
-          <IconButton onClick={handleClose}>
-            <CloseIcon sx={{ fontSize: 30 }} />
-          </IconButton>
+          <Stack direction="row" alignItems="flex-end" spacing={1}>
+            <Typography variant="h6" fontWeight="bold">급여대장 상세 조회</Typography>
+            
+            <Typography variant="body2" sx={{ pb: 0.6 }}>(급여대장 고유번호: {payroll?.id})</Typography>
+          </Stack>
+          <Stack>
+            <IconButton onClick={handleClose}>
+              <CloseIcon sx={{ fontSize: 30 }} />
+            </IconButton>
+          </Stack>
         </Stack>
       </DialogTitle>
 
