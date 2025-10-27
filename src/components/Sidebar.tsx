@@ -99,8 +99,8 @@ function Sidebar() {
           </ListItem>
 
           <ListItem disablePadding>
-            <Link to="/allowanceTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-              <ListItemButton selected={currentPath === '/allowanceTypes/list'}>
+            <Link to="/allowance-types/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/allowance-types/list'}>
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
@@ -110,8 +110,8 @@ function Sidebar() {
           </ListItem>
 
           <ListItem disablePadding>
-            <Link to="/deductionTypes/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-              <ListItemButton selected={currentPath === '/deductionTypes/list'}>
+            <Link to="/deduction-types/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/deduction-types/list'}>
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
@@ -127,6 +127,17 @@ function Sidebar() {
                   <ArticleIcon />
                 </ListItemIcon>
                 <ListItemText primary="기사 급여 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/stats/driver-join-leave" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/stats/driver-join-leave'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="기사 입퇴사 통계" />
               </ListItemButton>
             </Link>
           </ListItem>
