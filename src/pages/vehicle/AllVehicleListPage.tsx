@@ -10,6 +10,10 @@ import type { UpdateVehicleRequestDto } from "../../dtos/vehicle/request/update-
 import type { UpdateVehicleStatusRequestDto } from "../../dtos/vehicle/request/update-vehicle-status.request.dto";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
+import CreateVehicleModal from "../../components/vehicle/CreateVehicleModal";
+import VehicleDetailModal from "../../components/vehicle/VehicleDetailModal";
+import UpdateVehicleModal from "../../components/vehicle/UpdateVehicleModal";
+import UpdateVehicleStatusModal from "../../components/vehicle/UpdateVehicleStatusModal";
 
 const accessToken = "";
 const vehicleStatusColorMap: Record<VehicleStatus, "success" | "primary" | "warning" | "error" | "default"> = {
@@ -19,12 +23,19 @@ const vehicleStatusColorMap: Record<VehicleStatus, "success" | "primary" | "warn
     [VehicleStatus.DELETED]: "error",
 };
 
+const vehicleStatusMap: Record<VehicleStatus, string> = {
+    [VehicleStatus.AVAILABLE]: "운행 가능",
+    [VehicleStatus.IN_USE]: "운행중",
+    [VehicleStatus.UNDER_MAINTENANCE]: "정비중",
+    [VehicleStatus.DELETED]: "삭제됨",
+}
+
 function AllVehicleListPage() {
     const [page, setPage] = useState(0);
     const [queryKey, setQueryKey] = useState(0);
 
     const [listLoading, setListLoading] = useState(false);
-    const [detailLoding, setDetailLoading] = useState(false);
+    const [detailLoading, setDetailLoading] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
     const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -122,7 +133,7 @@ function AllVehicleListPage() {
     };
 
     const handleDetail = async (vehicleId: number) => {
-        if (!accessToken || detailLoding) return;
+        if (!accessToken || detailLoading) return;
 
         setOpenDetailModal(true);
         setSelectedVehicle(undefined);
@@ -200,7 +211,7 @@ function AllVehicleListPage() {
     };
 
     const handleDelete = async (vehicleId: number) => {
-        if (!accessToken || detailLoding) return;
+        if (!accessToken || detailLoading) return;
 
         try {
             setDetailLoading(true);
@@ -234,7 +245,7 @@ function AllVehicleListPage() {
     const handleStatusUpdateModalOpen = (vehicleId: number, newStatus: VehicleStatus) => {
         setUpdateStatusVehicleId(vehicleId);
         setPendingStatus(newStatus);
-        setOpenUpdateModal(true);
+        setOpenUpdateStatusModal(true);
     };
 
     const handleCreateModalOpen = () => setOpenCreateModal(true);
@@ -319,6 +330,7 @@ function AllVehicleListPage() {
                                                     renderValue={(value) => (
                                                         <Chip
                                                             size="small"
+                                                            label={vehicleStatusMap[value as VehicleStatus] ?? "알 수 없음"}
                                                             color={vehicleStatusColorMap[value as VehicleStatus] ?? "default"}
                                                         />
                                                     )}
@@ -329,6 +341,7 @@ function AllVehicleListPage() {
                                                             <MenuItem key={status} value={status}>
                                                                 <Chip
                                                                     size="small"
+                                                                    label={vehicleStatusMap[status] ?? "알 수 없음"}
                                                                     color={vehicleStatusColorMap[status] ?? "default"}
                                                                 />
                                                             </MenuItem>
@@ -366,6 +379,37 @@ function AllVehicleListPage() {
                         />
                     </Stack>
                 )}
+
+                <CreateVehicleModal
+                    open={openCreateModal}
+                    loading={createLoading}
+                    onClose={handleCreateModalClose}
+                    onConfirm={handleCreate}
+                />
+
+                <VehicleDetailModal
+                    vehicle={selectedVehicle}
+                    open={openDetailModal}
+                    loading={detailLoading}
+                    onClose={handleDetailModalClose}
+                    onEdit={handleUpdateModalOpen}
+                    onDelete={handleDelete}
+                />
+                <UpdateVehicleModal
+                    vehicle={selectedVehicle}
+                    open={openUpdateModal}
+                    loading={updateLoading}
+                    onClose={handleUpdateModalClose}
+                    onConfirm={handleUpdate}
+                />
+                <UpdateVehicleStatusModal
+                    vehicleId={updatedStatusVehicleId}
+                    newStatus={pendingStatus}
+                    open={openUpdateStatusModal}
+                    loading={updateLoading}
+                    onClose={handleStatusUpdateModalClose}
+                    onConfirm={handleStatusUpdate}
+                />
             </Box>
         </Box>
     );

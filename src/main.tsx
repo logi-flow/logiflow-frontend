@@ -18,6 +18,7 @@ import AllDriverPayrollListPage from './pages/driverPayroll/AllDriverPayrollList
 import MyDriverPayrollListPage from './pages/driverPayroll/MyDriverPayrollListPage'
 import CreateAllocationPage from './pages/admin/allocation/CreateAllocationPage'
 import ScheduleListPage from './pages/admin/schedule/ScheduleListPage'
+import AllVehicleListPage from './pages/vehicle/AllVehicleListPage'
 import DriverJoinLeaveStatsPage from './pages/stats/DriverJoinLeaveStatsPage'
 
 createRoot(document.getElementById('root')!).render(
@@ -53,6 +54,10 @@ createRoot(document.getElementById('root')!).render(
     <Routes>
       <Route path='/allocations' element={<CreateAllocationPage />} />
       <Route path='/schedules' element={<ScheduleListPage />} />
+    </Routes>
+
+    <Routes>
+      <Route path='/vehicles/list' element={<AllVehicleListPage />} />
     </Routes>
   </BrowserRouter>,
 )
