@@ -19,6 +19,7 @@ import MyDriverPayrollListPage from './pages/driverPayroll/MyDriverPayrollListPa
 import CreateAllocationPage from './pages/admin/allocation/CreateAllocationPage'
 import ScheduleListPage from './pages/admin/schedule/ScheduleListPage'
 import AllVehicleListPage from './pages/vehicle/AllVehicleListPage'
+import DriverJoinLeaveStatsPage from './pages/stats/DriverJoinLeaveStatsPage'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -32,9 +33,10 @@ createRoot(document.getElementById('root')!).render(
 
     <Routes>
       <Route path="/attendances/list" element={<AllAttendanceListPage />} />
-      <Route path="/allowanceTypes/list" element={<AllAllowanceTypeListPage />} />
-      <Route path="/deductionTypes/list" element={<AllDeductionTypeListPage />} />
+      <Route path="/allowance-types/list" element={<AllAllowanceTypeListPage />} />
+      <Route path="/deduction-types/list" element={<AllDeductionTypeListPage />} />
       <Route path="/payrolls/list" element={<AllDriverPayrollListPage />} />
+      <Route path="/stats/driver-join-leave" element={<DriverJoinLeaveStatsPage />} />
     </Routes>
 
     <Routes>
