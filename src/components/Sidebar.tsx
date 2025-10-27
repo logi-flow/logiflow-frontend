@@ -220,6 +220,18 @@ function Sidebar() {
             </ListItemButton>
           </Link>
         </ListItem>
+
+          <ListItem disablePadding>
+            <Link to="/vehicles/list" style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              <ListItemButton selected={currentPath === '/vehicles/list'}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="차량 관리" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+          
       </Box>
     </Drawer>
   )

@@ -1,6 +1,6 @@
 export const Fuel = {
   GASOLINE: "GASOLINE",
-  LGP: "LGP",
+  LPG: "LPG",
   ELECTRIC: "ELECTRIC",
   DIESEL: "DIESEL"
 } as const;
