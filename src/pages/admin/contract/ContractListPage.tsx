@@ -1,30 +1,71 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, type ChangeEvent } from 'react';
 import { deleteContract, getAllContract, getContractDetail, updateContract } from '../../../apis/contract/contract.apis';
-import { Box, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Toolbar, Typography, Pagination } from '@mui/material';
 import EditDocumentIcon from '@mui/icons-material/EditNote';
 import type { GetContractResponseDto } from '../../../dtos/contract/response/get-contract.response.dto';
+import type { GetAllContractResponseDto } from '../../../dtos/contract/response/get-all-contract.response.dto';
 import ContractDetailModal from '../../../components/contract/ContractDetailModal';
 import type { UpdateContractRequestDto } from '../../../dtos/contract/request/update-contract.request.dto';
 import Sidebar from '../../../components/Sidebar';
 import Header from '../../../components/Header';
 import { ContractStatus } from '../../../enums/contract-status.enum';
+import type PageDto from '../../../dtos/page.dto';
+import type { GetContractUpdateLogResponseDto } from '../../../dtos/contractLog/get-contract-update-log.response.dto';
+import type { GetContractStatusLogResponseDto } from '../../../dtos/contractLog/get-contract-status-log.response.dto';
+import { getContractStatusLogs, getContractUpdateLogs } from '../../../apis/contract/contract-log.apis';
+import ContractLogsModal from '../../../components/contractLog/ContractLogsModal';
 
 const statusFilters = ['ALL', ...Object.values(ContractStatus)];
 
 function ContractListPage() {
-  const page = 0;
+  const [page, setPage] = useState(0);
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI3Njk2NiwiZXhwIjoxNzYxMzEyOTY2fQ.Dyl4lzTzZ2wIf3DjgQGI3sHZGo_3OIpJ7-8CTF7V7Ag";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTg4OTk5OSwiZXhwIjoxNzYxOTI1OTk5fQ.VzMhIn7p17DkEQWBN_3Hzv0fftwCrKF7_VlK_2qvPCg";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<GetContractResponseDto | null>(null);
 
-  const [contracts, setContracts] = useState<any[]>([]);
+  const initialPageData: PageDto<GetAllContractResponseDto> = {
+    content: [],
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0,
+    first: true,
+    last: true,
+    hasNext: false,
+    hasPrevious: false,
+    sort: 'desc'
+  };
+  const [listData, setListData] = useState<PageDto<GetAllContractResponseDto>>(initialPageData);
+
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [updateLogLoading, setUpdateLogLoading] = useState(false);
+  const [statusLogLoading, setStatusLogLoading] = useState(false);
+  const [openUpdateLogModal, setOpenUpdateLogModal] = useState(false);
+  const [openStatusLogModal, setOpenStatusLogModal] = useState(false);
+
+  const initialLogData = {
+    content: [],
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0,
+    first: true,
+    last: true,
+    hasNext: false,
+    hasPrevious: false,
+    sort: 'desc'
+  };
+
+  const [updateLogData, setUpdateLogData] = useState<PageDto<GetContractUpdateLogResponseDto>>(initialLogData);
+  const [statusLogData, setStatusLogData] = useState<PageDto<GetContractStatusLogResponseDto>>(initialLogData);
+
 
   const openModal = (contract: GetContractResponseDto) => {
     setSelectedContract(contract);
@@ -36,32 +77,80 @@ function ContractListPage() {
     setSelectedContract(null);
   }
 
-  useEffect(() => {
-    const fetchContracts = async () => {
-
-      if (!accessToken) {
-        console.log("토큰이 없음");
-        return;
-      }
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await getAllContract(page, size, sort, accessToken);
-        if (response.code === "SU" && Array.isArray(response.data?.content)) {
-          setContracts(response.data.content);
-          console.log(response.data.content);
-        } else {
-          console.log(response.message);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
+  const fetchContracts = async () => {
+    if (!accessToken) {
+      console.log("토큰이 없음");
+      setLoading(false);
+      return;
     }
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getAllContract(page, size, sort, accessToken);
+      if (response.code === "SU" && response.data) {
+        setListData(response.data);
+      } else {
+        console.log(response.message);
+        setError(response.message || "데이터 조회 실패");
+        setListData(initialPageData);
+      }
+    } catch (err) {
+      console.log(err);
+      setError("데이터 조회 중 오류 발생");
+      setListData(initialPageData);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
     fetchContracts();
-  }, []);
+  }, [page, accessToken]);
+
+  const fetchContractUpdateLogs = async (page: number, size: number, sort: string) => {
+    if (!accessToken || updateLogLoading) return;
+
+    try {
+      setUpdateLogLoading(true);
+      const response = await getContractUpdateLogs(page, size, sort, accessToken);
+      const { code, message, data } = response;
+
+      if (code === "SU" && data) {
+        setUpdateLogData(data);
+      } else {
+        console.log(message);
+        alert("계약 수정 이력 조회 실패: " + message);
+      }
+    } catch (err) {
+      console.log(err);
+      alert("계약 수정 이력 조회 중 에러 발생: " + err);
+    } finally {
+      setUpdateLogLoading(false);
+    }
+  };
+
+  const fetchContractStatusLogs = async (page: number, size: number, sort: string) => {
+    if (!accessToken || statusLogLoading) return;
+
+    try {
+      setStatusLogLoading(true);
+      const response = await getContractStatusLogs(page, size, sort, accessToken);
+      const { code, message, data } = response;
+
+      if (code === "SU" && data) {
+        setStatusLogData(data);
+      } else {
+        console.log(message);
+        alert("계약 상태 변경 이력 조회 실패: " + message);
+      }
+    } catch (err) {
+      console.log(err);
+      alert("계약 상태 변경 이력 조회 중 에러 발생: " + err);
+    } finally {
+      setStatusLogLoading(false);
+    }
+  };
 
   const openModalWithContractId = async (id: number) => {
     try {
@@ -87,9 +176,7 @@ function ContractListPage() {
 
     if (response.code === "SU") {
       alert('삭제 완료');
-      setContracts((prevContracts) =>
-        prevContracts.filter((contract) => contract.id !== selectedContract.id)
-      );
+      fetchContracts();
       closeModal();
     } else {
       alert('삭제 실패: ' + response.message);
@@ -115,23 +202,7 @@ function ContractListPage() {
     try {
       if (response.code === "SU") {
         alert('수정 완료');
-        setContracts((prevContracts) =>
-          prevContracts.map((contract) =>
-            contract.id === updatedContract.id
-              ? {
-                ...contract,
-                startDate: updatedContract.startDate,
-                endDate: updatedContract.endDate,
-                baseFee: updatedContract.baseFee,
-                weightLimitKg: updatedContract.weightLimitKg,
-                parcelLimit: updatedContract.parcelLimit,
-                overWeightFeePerKg: updatedContract.overWeightFeePerKg,
-                overParcelFee: updatedContract.overParcelFee,
-                specialTerms: updatedContract.specialTerms,
-              }
-              : contract
-          )
-        );
+        fetchContracts();
         closeModal();
       } else {
         alert(response.message);
@@ -146,6 +217,23 @@ function ContractListPage() {
       setSelectedStatus(newStatus);
     }
   }
+
+  const handleChangePage = (_: ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage - 1);
+  };
+
+  const handleOpenUpdateLogModal = () => {
+    setOpenUpdateLogModal(true);
+    fetchContractUpdateLogs(0, 20, "desc");
+  };
+
+  const handleOpenStatusLogModal = () => {
+    setOpenStatusLogModal(true);
+    fetchContractStatusLogs(0, 20, "desc");
+  };
+
+  const handleCloseUpdateLogModal = () => setOpenUpdateLogModal(false);
+  const handleCloseStatusLogModal = () => setOpenStatusLogModal(false);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -191,13 +279,14 @@ function ContractListPage() {
 
             {(() => {
               const filteredContracts = selectedStatus === 'ALL'
-                ? contracts
-                : contracts.filter(contract => contract.status === selectedStatus);
+                ? listData.content
+                : listData.content.filter(contract => contract.status === selectedStatus);
 
               return (
                 <TableContainer component={Paper}>
                   <Table>
-                    <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                    <caption>총 {listData.totalElements}건</caption>
+                    <TableHead sx={{ backgroundColor: '#f5f5ff' }}>
                       <TableRow>
                         <TableCell align='center'>계약 번호</TableCell>
                         <TableCell align='center'>고객 번호</TableCell>
@@ -242,6 +331,29 @@ function ContractListPage() {
                 </TableContainer>
               );
             })()}
+
+            {!loading && listData.totalPages > 0 && (
+              <Stack sx={{ mt: 3, alignItems: 'center' }}>
+                <Pagination
+                  count={listData.totalPages}
+                  page={page + 1}
+                  onChange={handleChangePage}
+                  variant="outlined"
+                  shape="rounded"
+                  showFirstButton
+                  showLastButton
+                />
+              </Stack>
+            )}
+
+            <Stack sx={{ marginX: 3, mt: 3 }} direction="row" alignItems="center" justifyContent="right" spacing={1}>
+              <Button variant="outlined" onClick={handleOpenUpdateLogModal}>
+                수정 이력 조회
+              </Button>
+              <Button variant="outlined" onClick={handleOpenStatusLogModal}>
+                상태 변경 이력 조회
+              </Button>
+            </Stack>
           </>
         )}
         {selectedContract && (
@@ -253,9 +365,26 @@ function ContractListPage() {
             contract={selectedContract}
           />
         )}
+        <ContractLogsModal
+          logType="update"
+          log={updateLogData}
+          open={openUpdateLogModal}
+          loading={updateLogLoading}
+          onClose={handleCloseUpdateLogModal}
+          onChangePage={fetchContractUpdateLogs}
+        />
+
+        <ContractLogsModal
+          logType="status"
+          log={statusLogData}
+          open={openStatusLogModal}
+          loading={statusLogLoading}
+          onClose={handleCloseStatusLogModal}
+          onChangePage={fetchContractStatusLogs}
+        />
       </Box >
     </Box>
   )
 }
 
-export default ContractListPage
+export default ContractListPage;
