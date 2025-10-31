@@ -1,5 +1,6 @@
 export interface GetContractUpdateLogResponseDto {
   id: number;
+  contractId: number;
   customerName: string;
   businessNumber: string;
   representativeName: string;

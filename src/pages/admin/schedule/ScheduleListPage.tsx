@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from '@mui/material';
 import EditDocumentIcon from '@mui/icons-material/EditNote';
 import { getAllSchedule, getSchedule, updateSchedule } from '../../../apis/schedule/schedule.apis';
 import type { GetAllScheduleResponseDto } from '../../../dtos/schedule/response/get-all-schedule.response.dto';
@@ -8,12 +8,17 @@ import type { UpdateScheduleRequestDto } from '../../../dtos/schedule/request/up
 import Header from '../../../components/Header';
 import Sidebar from '../../../components/Sidebar';
 import ScheduleDetailModal from '../../../components/schedule/ScheduleDetailModal';
+import type { GetAllocationStatusLogResponseDto } from '../../../dtos/allocationLog/get-allocation-status-log.response.dto';
+import { getAllocationStatusLogs, getAllocationUpdateLogs } from '../../../apis/allocation/allocation-log.apis';
+import AllocationLogsModal from '../../../components/allocationLog/AllocationLogsModal';
+import type PageDto from '../../../dtos/page.dto';
+import type { GetAllocationUpdateLogResponseDto } from '../../../dtos/allocationLog/get-allocation-update-log.response.dto';
 
 function ScheduleListPage() {
   const page = 0;
   const size = 10;
   const sort = "createdAt,desc";
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI3Njk2NiwiZXhwIjoxNzYxMzEyOTY2fQ.Dyl4lzTzZ2wIf3DjgQGI3sHZGo_3OIpJ7-8CTF7V7Ag";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTg4OTk5OSwiZXhwIjoxNzYxOTI1OTk5fQ.VzMhIn7p17DkEQWBN_3Hzv0fftwCrKF7_VlK_2qvPCg";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<GetScheduleResponseDto | null>(null);
@@ -22,6 +27,27 @@ function ScheduleListPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [updateLogLoading, setUpdateLogLoading] = useState(false);
+  const [statusLogLoading, setStatusLogLoading] = useState(false);
+  const [openUpdateLogModal, setOpenUpdateLogModal] = useState(false);
+  const [openStatusLogModal, setOpenStatusLogModal] = useState(false);
+
+  const initialLogData = {
+    content: [],
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0,
+    first: true,
+    last: true,
+    hasNext: false,
+    hasPrevious: false,
+    sort: 'desc'
+  };
+
+  const [updateLogData, setUpdateLogData] = useState<PageDto<GetAllocationUpdateLogResponseDto>>(initialLogData);
+  const [statusLogData, setStatusLogData] = useState<PageDto<GetAllocationStatusLogResponseDto>>(initialLogData);
 
   const openModal = (schedule: GetScheduleResponseDto) => {
     setSelectedSchedule(schedule);
@@ -60,6 +86,48 @@ function ScheduleListPage() {
     fetchSchedules();
   }, []);
 
+  const fetchAllocationUpdateLogs = async (page: number, size: number, sort: string) => {
+    if (!accessToken) return;
+
+    try {
+      setUpdateLogLoading(true);
+      const response = await getAllocationUpdateLogs(page, size, sort, accessToken);
+      if (response.code === "SU" && response.data) {
+        setUpdateLogData(response.data);
+      } else {
+        console.log(response.message);
+        alert("배차 수정 이력 조회 실패: " + response.message);
+      }
+    } catch (err) {
+      alert("배차 수정 이력 조회 중 에러 발생: " + err);
+      console.log(err);
+    } finally {
+      setUpdateLogLoading(false);
+    }
+  };
+
+  const fetchAllocationStatusLogs = async (page: number, size: number, sort: string) => {
+    if (!accessToken) return;
+
+    try {
+      setStatusLogLoading(true);
+      const response = await getAllocationStatusLogs(page, size, sort, accessToken);
+      if (response.code === "SU" && response.data) {
+        setStatusLogData(response.data);
+      } else {
+        console.log(response.message);
+        alert("배차 상태 변경 이력 조회 실패: " + response.message);
+      }
+    } catch (err) {
+      console.log(err);
+      alert("배차 상태 변경 이력 조회 중 에러 발생: " + err);
+    } finally {
+      setStatusLogLoading(false);
+    }
+  };
+
+
+
   const openModalWithScheduleId = async (id: number) => {
     try {
       const response = await getSchedule(id, accessToken);
@@ -92,6 +160,24 @@ function ScheduleListPage() {
     }
   };
 
+  const handleOpenUpdateLogModal = () => {
+    fetchAllocationUpdateLogs(0, size, sort);
+    setOpenUpdateLogModal(true);
+  };
+
+  const handleOpenStatusLogModal = () => {
+    fetchAllocationStatusLogs(0, size, sort);
+    setOpenStatusLogModal(true);
+  };
+
+  const handleCloseUpdateLogModal = () => {
+    setOpenUpdateLogModal(false);
+  };
+
+  const handleCloseStatusLogModal = () => {
+    setOpenStatusLogModal(false);
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Header />
@@ -100,7 +186,7 @@ function ScheduleListPage() {
         <Toolbar />
 
         <Typography variant='h4' gutterBottom>
-          스케줄 목록 (관리자)
+          배차 스케줄 목록 (관리자)
         </Typography>
 
         {loading && (
@@ -159,7 +245,16 @@ function ScheduleListPage() {
               </TableBody>
             </Table>
           </TableContainer>
+
         )}
+        <Stack sx={{ marginX: 3, mt: 3 }} direction="row" alignItems="center" justifyContent="right" spacing={1}>
+          <Button variant="outlined" onClick={handleOpenUpdateLogModal}>
+            수정 이력 조회
+          </Button>
+          <Button variant="outlined" onClick={handleOpenStatusLogModal}>
+            상태 변경 이력 조회
+          </Button>
+        </Stack>
 
         {selectedSchedule && (
           <ScheduleDetailModal
@@ -169,6 +264,22 @@ function ScheduleListPage() {
             schedule={selectedSchedule}
           />
         )}
+        <AllocationLogsModal
+          logType="update"
+          log={updateLogData}
+          open={openUpdateLogModal}
+          onClose={handleCloseUpdateLogModal}
+          loading={updateLogLoading}
+          onChangePage={fetchAllocationUpdateLogs}
+        />
+        <AllocationLogsModal
+          logType="status"
+          log={statusLogData}
+          open={openStatusLogModal}
+          onClose={handleCloseStatusLogModal}
+          loading={statusLogLoading}
+          onChangePage={fetchAllocationStatusLogs}
+        />
       </Box>
     </Box>
   );
