@@ -2,14 +2,16 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import type PageDto from "../../dtos/page.dto";
 import type { GetAllDriverResponseDto } from "../../dtos/driver/response/get-all-driver.response.dto";
 import type { GetDriverDetailResponseDto } from "../../dtos/driver/response/get-driver-detail.response.dto";
-import type { DriverStatus } from "../../enums/driver-status.enum";
+import { DriverStatus, driverStatusColorMap, driverStatusMap } from "../../enums/driver-status.enum";
 import { createDriver, getAllDriver, getDriverDetail, retiredDriver, updateDriverByAdmin, updateDriverPay, updateDriverStatus } from "../../apis/driver/driver.apis";
 import type { CreateDriverRequestDto } from "../../dtos/driver/request/create-driver.request.dto";
 import { errorBarReducer } from "recharts/types/state/errorBarSlice";
 import type { UpdateDriverByAdminRequestDto } from "../../dtos/driver/request/update-driver-by-admin.request.dto";
 import type { UpdateDriverPayRequestDto } from "../../dtos/driver/request/update-driver-pay.request.dto";
 import type { UpdateDriverStatusRequestDto } from "../../dtos/driver/request/update-driver-status.request.dto";
-import { Box, type SelectChangeEvent } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography, type SelectChangeEvent } from "@mui/material";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
 
 const accessToken = "";
 
@@ -234,8 +236,121 @@ function AllDriverListPage() {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            
+            <Header />
+            <Sidebar />
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Toolbar />
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                    <Typography variant="h6" fontWeight={700}>기사 관리</Typography>
+                </Stack>
+
+                <Stack sx={{ p: 3 }} spacing={2} direction="row" alignItems="center" justifyContent="flex-end">
+                    <Button sx={{ width: '80px' }} variant="contained" size="medium" disabled={listLoading} onClick={handleSearch}>조회</Button>
+                    <Button sx={{ width: '80px' }} variant="contained" size="medium" disabled={listLoading} onClick={handleCreateModalOpen}>추가</Button>
+                </Stack>
+
+                <Stack sx={{ p: 3 }}>
+                    <Paper sx={{ width: '100%', mb: 2 }}>
+                        <TableContainer>
+                            <Table sx={{ minWidth: 750 }}>
+                                <caption>총 {listData.totalElements}건</caption>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">순번</TableCell>
+                                        <TableCell align="center">기사 ID</TableCell>
+                                        <TableCell align="center">기사명</TableCell>
+                                        <TableCell align="center">연락처</TableCell>
+                                        <TableCell align="center">상태</TableCell>
+                                        <TableCell align="center">등록일</TableCell>
+                                        <TableCell align="center">상세 조회</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {!listLoading && (<TableRow><TableCell colSpan={7} align="center"><CircularProgress /></TableCell></TableRow>)}
+                                    {!listLoading && queryKey > 0 && listData.totalElements <= 0 && (<TableRow><TableCell colSpan={7} align="center">조회 결과가 없습니다.</TableCell></TableRow>)}
+                                    {!listLoading && listData.content.map((row, index) => (
+                                        <TableRow hover key={row.driverId}>
+                                            <TableCell align="center">{page * size + index + 1}</TableCell>
+                                            <TableCell align="center">{row.driverId}</TableCell>
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.phoneNumber}</TableCell>
+                                            <TableCell align="center">
+                                                <Select
+                                                    size="small"
+                                                    value={row.status}
+                                                    disabled={updatedStatusDriverId === row.driverId || listLoading}
+                                                    onChange={(e) => handleSelectChange(e, row.driverId, row.status)}
+                                                    renderValue={(value) => (
+                                                        <Chip size="small"
+                                                            label={driverStatusMap[value as DriverStatus] ?? "알 수 없음"}
+                                                            color={driverStatusColorMap[value as DriverStatus] ?? "default"}
+                                                        />
+                                                    )}
+                                                >
+                                                    {Object.values(DriverStatus)
+                                                        .filter(status => status !== DriverStatus.RETIRED)
+                                                        .map((status) => (
+                                                            <MenuItem key={status} value={status}>
+                                                                <Chip size="small"
+                                                                    label={driverStatusMap[status] ?? "알 수 없음"}
+                                                                    color={driverStatusColorMap[status] ?? "default"}
+                                                                />
+                                                            </MenuItem>
+                                                        ))}
+                                                </Select>
+                                            </TableCell>
+                                            <TableCell align="center">{new Date(row.createdAt).toLocaleString('ko-KR')}</TableCell>
+                                            <TableCell align="center">
+                                                <Button size="small" variant="contained" onClick={() => handleDetail(row.driverId)}>상세</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
+                </Stack>
+
+                {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+                    <Stack spacing={2} alignItems="center">
+                        <Pagination
+                            count={listData.totalPages} page={page + 1} onChange={handleChangePage}
+                            variant="outlined" shape="rounded" showFirstButton showLastButton
+                        />
+                    </Stack>
+                )}
+
+                {/* <CreateDriverModal
+                    open={openCreateModal}
+                    loading={createLoading}
+                    onClose={handleCreateModalClose}
+                    onConfirm={handleCreate}
+                />
+                <DriverDetailModal
+                    driver={selectedDriver}
+                    open={openDetailModal}
+                    loading={detailLoading}
+                    onClose={handleDetailModalClose}
+                    onEditInfo={handleUpdateModalOpen}
+                    onEditPay={handlePayUpdate}
+                    onDelete={handleDelete}
+                />
+                <UpdateDriverModal
+                    dirver={selectedDriver}
+                    open={openUpdateModal}
+                    loading={updateLoading}
+                    onClose={handleUpdateModalClose}
+                    onConfirm={handlePayUpdate}
+                />
+                <UpdateDriverStatusModal
+                    dirverId={updatedStatusDriverId}
+                    newStatus={pendingStatus}
+                    open={openUpdateStatusModal}
+                    loading={updateLoading}
+                    onClose={handleStatusUpdateModalClose}
+                    onConfirm={handleStatusUpdate}
+                /> */}
+            </Box>
         </Box>
     )
-    
 }
