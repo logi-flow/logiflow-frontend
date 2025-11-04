@@ -3,7 +3,7 @@ import type { CreateDriverRequestDto } from "../../dtos/driver/request/create-dr
 import type { CreateDriverResponseDto } from "../../dtos/driver/response/create-driver.response.dto";
 import type ResponseDto from "../../dtos/response.dto";
 import { axiosInstance, bearerAuthorization, responseErrorHandler, responseSuccessHandler } from "../axios-config";
-import { CREATE_DRIVER_URL, GET_ALL_DRIVER_URL, GET_MY_INFO_URL, RETIRED_DRIVER_URL, UPDATE_DRIVER_BY_ADMIN_URL, UPDATE_DRIVER_PAY_URL, UPDATE_DRIVER_STATUS_URL, UPDATE_DRIVER_URL } from "./driver.urls";
+import { CREATE_DRIVER_URL, GET_ALL_DRIVER_URL, GET_DRIVER_DETAIL_URL, GET_MY_INFO_URL, RETIRED_DRIVER_URL, UPDATE_DRIVER_BY_ADMIN_URL, UPDATE_DRIVER_PAY_URL, UPDATE_DRIVER_STATUS_URL, UPDATE_DRIVER_URL } from "./driver.urls";
 import type { UpdateDriverRequestDto } from "../../dtos/driver/request/update-driver.request.dto";
 import type { UpdateDriverResponseDto } from "../../dtos/driver/response/update-driver.response.dto";
 import type { UpdateDriverByAdminRequestDto } from "../../dtos/driver/request/update-driver-by-admin.request.dto";
@@ -114,6 +114,21 @@ export const getAllDriver = async (
   } catch (error) {
     return responseErrorHandler(error as AxiosError<ResponseDto>);
   }
+};
+
+export const getDriverDetail = async (
+    driverId: number,
+    accessToken: string
+): Promise<ResponseDto<GetDriverDetailResponseDto>> => {
+    try {
+        const response = await axiosInstance.get(
+            GET_DRIVER_DETAIL_URL(driverId),
+            bearerAuthorization(accessToken)
+        );
+        return responseSuccessHandler(response);
+    } catch (error) {
+        return responseErrorHandler(error as AxiosError<ResponseDto>);
+    }
 };
 
 export const getMyInfo = async (
