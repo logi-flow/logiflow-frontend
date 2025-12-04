@@ -2,7 +2,7 @@ import type { AxiosError } from "axios";
 import type { CustomerSignUpRequestDto } from "../../dtos/auth/request/customer-sign-up.request.dto";
 import type { CustomerSignUpResponseDto } from "../../dtos/auth/response/customer-sign-up.response.dto";
 import type ResponseDto from "../../dtos/response.dto";
-import { axiosInstance, bearerAuthorization, responseErrorHandler, responseSuccessHandler } from "../axios-config";
+import { axiosInstance, responseErrorHandler, responseSuccessHandler } from "../axios-config";
 import { CUSTOMER_FIND_ID_URL, CUSTOMER_RESET_PASSWORD_URL, EXIST_BUSINESS_NUMBER_URL, EXIST_EMAIL_URL, EXIST_ID_URL, LOGIN_URL, MUST_CHANGE_PASSWORD_URL, RESET_PASSWORD_URL, SIGNUP_URL, USER_FIND_ID_URL, USER_RESET_PASSWORD_URL, VERIFY_EMAIL_URL } from "./auth.urls";
 import type { LoginResponseDto } from "../../dtos/auth/response/login.response.dto";
 import type { LoginRequestDto } from "../../dtos/auth/request/login.request.dto";
@@ -22,6 +22,8 @@ import type { PasswordResetSendEmailResponseDto } from "../../dtos/auth/response
 import type { FirstPasswordChangeRequestDto } from "../../dtos/auth/request/first-password-change.request.dto";
 import type { FirstPasswordChangeResponseDto } from "../../dtos/auth/response/first-password-change.response.dto";
 
+const noAuth = { headers: { Authorization: ""} };
+
 export const Signup = async (
   dto: CustomerSignUpRequestDto,
   profileImage: File | null
@@ -38,7 +40,8 @@ export const Signup = async (
 
     const response = await axiosInstance.post(
       SIGNUP_URL,
-      formData
+      formData,
+        { headers: { "Content-Type": undefined } }
     );
     return responseSuccessHandler(response);
   } catch (error) {
@@ -139,7 +142,8 @@ export const requestPasswordResetCustomer = async (
   try {
     const response = await axiosInstance.post(
       CUSTOMER_RESET_PASSWORD_URL,
-      dto
+      dto,
+      noAuth
     );
     return responseSuccessHandler(response);
   } catch (error) {
@@ -153,7 +157,8 @@ export const requestPasswordResetUser = async (
   try {
     const response = await axiosInstance.post(
       USER_RESET_PASSWORD_URL,
-      dto
+      dto,
+      noAuth
     );
     return responseSuccessHandler(response);
   } catch (error) {
@@ -163,13 +168,14 @@ export const requestPasswordResetUser = async (
 
 export const resetPassword = async (
   dto: PasswordResetRequestDto,
-  accessToken: string
+  resetToken: string
 ) : Promise<ResponseDto<PasswordResetSendEmailResponseDto>> => {
   try {
+    const url = `${RESET_PASSWORD_URL}?token=${encodeURIComponent(resetToken)}`;
     const response = await axiosInstance.post(
-      RESET_PASSWORD_URL,
+      url,
       dto,
-      bearerAuthorization(accessToken)
+      noAuth
     );
     return responseSuccessHandler(response);
   } catch (error) {
