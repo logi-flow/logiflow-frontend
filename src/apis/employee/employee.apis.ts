@@ -56,7 +56,7 @@ export const updateEmployee = async (
   }
 };
 
-export const getCustomerDetail = async (
+export const getEmployeeDetail = async (
   accessToken: string
 ) : Promise<ResponseDto<GetEmployeeDetailResponseDto>> => {
   try {
@@ -104,7 +104,7 @@ export const updateEmployeeStatus = async (
   }
 };
 
-export const getAllCustomer = async (
+export const getAllEmployee = async (
   page: number,
   size: number,
   sort: string,

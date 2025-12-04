@@ -9,13 +9,13 @@ export interface CustomerSignUpRequestDto {
   businessType: string;
   businessItems: string;
   telephone: string;
-  fax?: string;
+  fax?: string | null;
   businessZipCode: string;
   businessAddress: string;
-  businessAddressDetail?: string;
-  chargePosition?: string;
-  chargeDepartment?: string;
-  chargeName?: string;
-  chargePhone?: string;
-  chargeEmail?: string;
+  businessAddressDetail?: string | null;
+  chargePosition?: string | null;
+  chargeDepartment?: string | null;
+  chargeName?: string | null;
+  chargePhone?: string | null;
+  chargeEmail?: string | null;
 }

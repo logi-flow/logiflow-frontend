@@ -18,6 +18,11 @@ import AllDriverPayrollListPage from './pages/driverPayroll/AllDriverPayrollList
 import MyDriverPayrollListPage from './pages/driverPayroll/MyDriverPayrollListPage'
 import CreateAllocationPage from './pages/admin/allocation/CreateAllocationPage'
 import ScheduleListPage from './pages/admin/schedule/ScheduleListPage'
+import SignupCustomer from './pages/auth/SignupCustomer'
+import Login from './pages/auth/Login'
+import PasswordResetRequest from './pages/auth/PasswordResetRequest'
+import PasswordReset from './pages/auth/PasswordReset'
+import CustomerListPage from './pages/admin/customer/CustomerListPage'
 import AllVehicleListPage from './pages/vehicle/AllVehicleListPage'
 import DriverJoinLeaveStatsPage from './pages/stats/DriverJoinLeaveStatsPage'
 
@@ -57,6 +62,17 @@ createRoot(document.getElementById('root')!).render(
     </Routes>
 
     <Routes>
+      <Route path="/auth/signup" element={<SignupCustomer />} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/password/request" element={<PasswordResetRequest />} />
+      <Route path="/auth/password/reset" element={<PasswordReset />} />
+    </Routes>
+
+    <Routes>
+      <Route path="/customers/list" element={<CustomerListPage />} />
+    </Routes>
+  </BrowserRouter>
+);
       <Route path='/vehicles/list' element={<AllVehicleListPage />} />
     </Routes>
   </BrowserRouter>,
