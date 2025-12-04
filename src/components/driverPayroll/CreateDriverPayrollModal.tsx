@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ConfirmModal from "../ConfirmModal";
 import type { CreateDriverPayrollRequestDto } from "../../dtos/driverPayroll/request/create-driver-payroll.request.dto";
 import DriverListModal from "./DriverListModal";
+import type { GetDriverDetailResponseDto } from "../../dtos/driver/response/get-driver-detail.response.dto";
 
 interface Props {
   open: boolean;
@@ -13,9 +14,10 @@ interface Props {
 }
 
 function CreateDriverPayrollModal({ open, loading, onClose, onConfirm }: Props) {
-  const initialForm = { driverId: "", title: "", periodStartDate: "", periodEndDate: "" };
+  const initialForm = { driverId: "", driverName: "", title: "", periodStartDate: "", periodEndDate: "" };
   const [form, setForm] = useState({
     driverId: "",
+    driverName: "",
     title: "",
     periodStartDate: "",
     periodEndDate: ""
@@ -60,8 +62,8 @@ function CreateDriverPayrollModal({ open, loading, onClose, onConfirm }: Props) 
     setOpenDriverListModal(true);
   };
 
-  const handleSelectDriver = (driverId: number) => {
-    setForm(prev => ({ ...prev, driverId: String(driverId) }));
+  const handleSelectDriver = (driver: GetDriverDetailResponseDto) => {
+    setForm(prev => ({ ...prev, driverId: String(driver.driverId), driverName: driver.name }));
     setOpenDriverListModal(false);
   };
 
@@ -121,20 +123,35 @@ function CreateDriverPayrollModal({ open, loading, onClose, onConfirm }: Props) 
             </DialogContentText>
             <form id="createDriverPayrollForm" onSubmit={handleSubmit}>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     required
                     id="driverId"
                     name="driverId"
                     label="기사 고유번호"
-                    type="number"
-                    inputMode="numeric"
+                    type="text"
+                    inputMode="text"
                     value={form.driverId}
                     fullWidth
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={isDriverIdInvalid}
                     helperText={driverIdHelperText}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    required
+                    disabled
+                    id="driverName"
+                    name="driverName"
+                    label="기사 이름"
+                    type="text"
+                    inputMode="text"
+                    value={form.driverName}
+                    fullWidth
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid item xs={12} md={2}>

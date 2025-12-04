@@ -12,7 +12,6 @@ import { createDriverPayroll, deleteDriverPayroll, getAllDriverPayroll, getDrive
 import { DriverPayrollStatus, payrollStatusColorMap, payrollStatusMap } from "../../enums/driver-payroll-status.enum";
 import type { CreateDriverPayrollRequestDto } from "../../dtos/driverPayroll/request/create-driver-payroll.request.dto";
 import DriverPayrollDetailModal from "../../components/driverPayroll/DriverPayrollDetailModal";
-import UpdateDriverPayrollModal from "../../components/driverPayroll/UpdateDriverPayrollModal";
 import type { UpdateDriverPayrollRequestDto } from "../../dtos/driverPayroll/request/update-driver-payroll.request.dto";
 import type { UpdateDriverPayrollStatusRequestDto } from "../../dtos/driverPayroll/request/update-driver-payroll-status.request.dto";
 import UpdateDriverPayrollStatusModal from "../../components/driverPayroll/UpdateDriverPayrollStatusModal";
@@ -21,22 +20,40 @@ import type { GetDriverPayrollStatusLogResponseDto } from "../../dtos/driverPayr
 import { getDriverPayrollStatusLogs, getDriverPayrollUpdateLogs } from "../../apis/driverPayroll/driver-payroll-log.apis";
 import DriverPayrollLogsModal from "../../components/driverPayrollLog/DriverPayrollLogsModal";
 import CreateDriverAllowanceModal from "../../components/driverAllowance/CreateDriverAllowancelModal";
-import { createDriverAllowance } from "../../apis/driverAllowance/driver-allowance.apis";
+import { createDriverAllowance, deleteDriverAllowance, updateDriverAllowance } from "../../apis/driverAllowance/driver-allowance.apis";
 import type { CreateDriverAllowanceRequestDto } from "../../dtos/driverAllowance/request/create-driver-allowance.request.dto";
+import type { UpdateDriverAllowanceRequestDto } from "../../dtos/driverAllowance/request/update-driver-allowance.request.dto";
+import type { UpdateDriverDeductionRequestDto } from "../../dtos/driverDeduction/request/update-driver-deduction.request.dto";
+import { createDriverDeduction, deleteDriverDeduction, updateDriverDeduction } from "../../apis/driverDeduction/driver-deduction.apis";
+import type { CreateDriverDeductionRequestDto } from "../../dtos/driverDeduction/request/create-driver-deduction.request.dto";
+import CreateDriverDeductionModal from "../../components/driverDeduction/CreateDriverDeductionModal";
+import type { GetDriverAllowanceUpdateLogResponseDto } from "../../dtos/driverAllowanceLog/response/get-driver-allowance-update-log.response.dto";
+import type { GetDriverDeductionUpdateLogResponseDto } from "../../dtos/driverDeductionLog/response/get-driver-deduction-update-log.response.dto";
+import { getDriverAllowanceUpdateLogs } from "../../apis/driverAllowance/driver-allowance-log.apis";
+import { getDriverDeductionUpdateLogs } from "../../apis/driverDeduction/driver-deduction-log.apis";
+import DriverAllowanceLogsModal from "../../components/driverAllowanceLog/DriverAllowanceLogsModal";
+import DriverDeductionLogsModal from "../../components/driverDeductionLog/DriverDeductionLogsModal";
 
 function AllDriverPayrollListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTAxNDIyNiwiZXhwIjoxNzYxMDUwMjI2fQ.5hDqK15Vh0pzZIxRfGNVUlwbhsQHuB7SDQFhEdTfApc";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTM2ODUwMywiZXhwIjoxNzYxNDA0NTAzfQ.eELS15CtpgUYE4xz80PcY8OwzbxIohsovE7O9WMulbk";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const [updateLogLoading, setUpdateLogLoading] = useState(false);
-  const [statusLogLoading, setStatusLogLoading] = useState(false);
   const [createAllowanceLoading, setCreateAllowanceLoading] = useState(false);
+  const [updateAllowanceLoading, setUpdateAllowanceLoading] = useState(false);
+  const [deleteAllowanceLoading, setDeleteAllowanceLoading] = useState(false);
+  const [createDeductionLoading, setCreateDeductionLoading] = useState(false);
+  const [updateDeductionLoading, setUpdateDeductionLoading] = useState(false);
+  const [deleteDeductionLoading, setDeleteDeductionLoading] = useState(false);
+  const [updatePayrollLogLoading, setUpdatePayrollLogLoading] = useState(false);
+  const [statusPayrollLogLoading, setStatusPayrollLogLoading] = useState(false);
+  const [updateAllowanceLogLoading, setUpdateAllowanceLogLoading] = useState(false);
+  const [updateDeductionLogLoading, setUpdateDeductionLogLoading] = useState(false);
   const [listData, setListData] = useState<PageDto<GetAllDriverPayrollResponseDto>>({
     content: [],
     number: 0,
@@ -49,7 +66,7 @@ function AllDriverPayrollListPage() {
     hasPrevious: false,
     sort: 'desc',
   });
-  const [updateLogData, setUpdateLogData] = useState<PageDto<GetDriverPayrollUpdateLogResponseDto>> ({
+  const [updatePayrollLogData, setUpdatePayrollLogData] = useState<PageDto<GetDriverPayrollUpdateLogResponseDto>> ({
     content: [],
     number: 0,
     size: 0,
@@ -61,7 +78,31 @@ function AllDriverPayrollListPage() {
     hasPrevious: false,
     sort: 'desc',
   });
-  const [statusLogData, setStatusLogData] = useState<PageDto<GetDriverPayrollStatusLogResponseDto>> ({
+  const [statusPayrollLogData, setStatusPayrollLogData] = useState<PageDto<GetDriverPayrollStatusLogResponseDto>> ({
+    content: [],
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0,
+    first: true,
+    last: true,
+    hasNext: false,
+    hasPrevious: false,
+    sort: 'desc',
+  });
+  const [updateAllowanceLogData, setUpdateAllowanceLogData] = useState<PageDto<GetDriverAllowanceUpdateLogResponseDto>> ({
+    content: [],
+    number: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0,
+    first: true,
+    last: true,
+    hasNext: false,
+    hasPrevious: false,
+    sort: 'desc',
+  });
+  const [updateDeductionLogData, setUpdateDeductionLogData] = useState<PageDto<GetDriverDeductionUpdateLogResponseDto>> ({
     content: [],
     number: 0,
     size: 0,
@@ -75,13 +116,12 @@ function AllDriverPayrollListPage() {
   });
   const [openDetailModal, setOpenDetailModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [openPayrollUpdateModal, setOpenPayrollUpdateModal] = useState(false);
   const [openPayrollStatusUpdateModal, setOpenPayrollStatusUpdateModal] = useState(false);
   const [openAllowanceCreateModal, setOpenAllowanceCreateModal] = useState(false);
-  const [openAllowanceUpdateModal, setOpenAllowanceUpdateModal] = useState(false);
   const [openDeductionCreateModal, setOpenDeductionCreateModal] = useState(false);
-  const [openDeductionUpdateModal, setOpenDeductionUpdateModal] = useState(false);
-  const [openLogModal, setOpenLogModal] = useState(false);
+  const [openPayrollLogModal, setOpenPayrollLogModal] = useState(false);
+  const [openAllowanceLogModal, setOpenAllowanceLogModal] = useState(false);
+  const [openDeductionLogModal, setOpenDeductionLogModal] = useState(false);
   const [selectedPayroll, setSelectedPayroll] = useState<GetDriverPayrollDetailResponseDto>();
   const [updatedStatusPayrollId, setUpdatedStatusPayrollId] = useState<number | null>(null);
   const [pendingStatus, setPendingStatus] = useState<DriverPayrollStatus | null>(null);
@@ -118,16 +158,16 @@ function AllDriverPayrollListPage() {
   };
 
   const fetchDriverPayrollUpdateLogs = async (page: number, size: number, sort: string) =>  {
-    if (!accessToken || updateLogLoading) return;
+    if (!accessToken || updatePayrollLogLoading) return;
         
     try {
-      setUpdateLogLoading(true);
+      setUpdatePayrollLogLoading(true);
 
       const response = await getDriverPayrollUpdateLogs(page, size, sort, accessToken);
       const { code, message, data } = response;
       
       if (code === "SU" && data) {
-        setUpdateLogData(data);
+        setUpdatePayrollLogData(data);
       } else {
         console.error("기사 급여대장 수정 이력 조회 실패: ", message);
         alert("기사 급여대장 수정 이력 조회 실패: " + message);
@@ -136,21 +176,21 @@ function AllDriverPayrollListPage() {
       console.error("기사 급여대장 수정 이력 조회 중 에러 발생: ", e);
       alert("기사 급여대장 수정 이력 조회 중 에러 발생: " + e);
     } finally {
-      setUpdateLogLoading(false);
+      setUpdatePayrollLogLoading(false);
     }
   };
 
   const fetchDriverPayrollStatusLogs = async (page: number, size: number, sort: string) =>  {
-    if (!accessToken || statusLogLoading) return;
+    if (!accessToken || statusPayrollLogLoading) return;
         
     try {
-      setStatusLogLoading(true);
+      setStatusPayrollLogLoading(true);
 
       const response = await getDriverPayrollStatusLogs(page, size, sort, accessToken);
       const { code, message, data } = response;
       
       if (code === "SU" && data) {
-        setStatusLogData(data);
+        setStatusPayrollLogData(data);
       } else {
         console.error("기사 급여대장 수정 이력 조회 실패: ", message);
         alert("기사 급여대장 수정 이력 조회 실패: " + message);
@@ -159,7 +199,53 @@ function AllDriverPayrollListPage() {
       console.error("기사 급여대장 수정 이력 조회 중 에러 발생: ", e);
       alert("기사 급여대장 수정 이력 조회 중 에러 발생: " + e);
     } finally {
-      setStatusLogLoading(false);
+      setStatusPayrollLogLoading(false);
+    }
+  };
+
+  const fetchDriverAllowanceUpdateLogs = async (page: number, size: number, sort: string) =>  {
+    if (!accessToken || updateAllowanceLogLoading) return;
+        
+    try {
+      setUpdateAllowanceLogLoading(true);
+
+      const response = await getDriverAllowanceUpdateLogs(page, size, sort, accessToken);
+      const { code, message, data } = response;
+      
+      if (code === "SU" && data) {
+        setUpdateAllowanceLogData(data);
+      } else {
+        console.error("수당 내역 수정 이력 조회 실패: ", message);
+        alert("수당 내역 수정 이력 조회 실패: " + message);
+      }
+    } catch (e) {
+      console.error("수당 내역 수정 이력 조회 중 에러 발생: ", e);
+      alert("수당 내역 수정 이력 조회 중 에러 발생: " + e);
+    } finally {
+      setUpdateAllowanceLogLoading(false);
+    }
+  };
+
+  const fetchDriverDeductionUpdateLogs = async (page: number, size: number, sort: string) =>  {
+    if (!accessToken || updateDeductionLogLoading) return;
+        
+    try {
+      setUpdateDeductionLogLoading(true);
+
+      const response = await getDriverDeductionUpdateLogs(page, size, sort, accessToken);
+      const { code, message, data } = response;
+      
+      if (code === "SU" && data) {
+        setUpdateDeductionLogData(data);
+      } else {
+        console.error("공제 내역 수정 이력 조회 실패: ", message);
+        alert("공제 내역 수정 이력 조회 실패: " + message);
+      }
+    } catch (e) {
+      console.error("공제 내역 수정 이력 조회 중 에러 발생: ", e);
+      alert("공제 내역 수정 이력 조회 중 에러 발생: " + e);
+    } finally {
+      setUpdateDeductionLogLoading(false);
     }
   };
 
@@ -184,7 +270,7 @@ function AllDriverPayrollListPage() {
     try {
       setCreateLoading(true);
 
-      const response = await createDriverPayroll(dto, accessToken)
+      const response = await createDriverPayroll(dto, accessToken);
       const { code, message, data } = response;
       
       if (code === "SU" && data) {
@@ -235,11 +321,10 @@ function AllDriverPayrollListPage() {
     try {
       setUpdateLoading(true);
 
-      const response = await updateDriverPayroll(payrollId, dto, accessToken)
+      const response = await updateDriverPayroll(payrollId, dto, accessToken);
       const { code, message, data } = response;
       
       if (code === "SU" && data) {
-        setOpenPayrollUpdateModal(false);
         await fetchAllDriverPayrolls();
         
         if (selectedPayroll) {
@@ -263,7 +348,7 @@ function AllDriverPayrollListPage() {
     try {
       setUpdateLoading(true);
 
-      const response = await updateDriverPayrollStatus(payrollId, dto, accessToken)
+      const response = await updateDriverPayrollStatus(payrollId, dto, accessToken);
       const { code, message, data } = response;
       
       if (code === "SU" && data) {
@@ -289,7 +374,7 @@ function AllDriverPayrollListPage() {
     try {
       setDetailLoading(true);
 
-      const response = await deleteDriverPayroll(payrollId, accessToken)
+      const response = await deleteDriverPayroll(payrollId, accessToken);
       const { code, message } = response;
       
       if (code === "SU") {
@@ -313,7 +398,7 @@ function AllDriverPayrollListPage() {
     try {
       setCreateAllowanceLoading(true);
 
-      const response = await createDriverAllowance(selectedPayroll.id, dto, accessToken)
+      const response = await createDriverAllowance(selectedPayroll.id, dto, accessToken);
       const { code, message } = response;
       
       if (code === "SU") {
@@ -336,52 +421,183 @@ function AllDriverPayrollListPage() {
     }
   };
 
-  const handleLog = () => {
-    if (!accessToken || updateLogLoading || statusLogLoading) return;
+  const handleUpdateAllowance = async (dto: UpdateDriverAllowanceRequestDto) => {
+    if (!accessToken || updateAllowanceLoading || !selectedPayroll) return;
 
-    setOpenLogModal(true);
+    try {
+      setUpdateAllowanceLoading(true);
+
+      const response = await updateDriverAllowance(selectedPayroll.id, dto, accessToken);
+      const { code, message } = response;
+      
+      if (code === "SU") {
+        setOpenDetailModal(false);
+        await fetchAllDriverPayrolls();
+
+        if (selectedPayroll) {
+          handleDetail(selectedPayroll.id);
+        }
+      } else {
+        console.error("수당 내역 수정 실패: ", message);
+        alert("수당 내역 수정 실패: " + message);
+      }
+    } catch (e) {
+      console.error("수당 내역 수정 중 에러 발생: ", e);
+      alert("수당 내역 수정 중 에러 발생: " + e);
+    } finally {
+      setUpdateAllowanceLoading(false);
+    }
   };
 
+  const handleDeleteAllowance = async (driverAllowanceId: number) => {
+    if (!accessToken || deleteAllowanceLoading || !selectedPayroll) return;
+
+    try {
+      setDeleteAllowanceLoading(true);
+
+      const response = await deleteDriverAllowance(selectedPayroll.id, driverAllowanceId, accessToken);
+      const { code, message } = response;
+      
+      if (code === "SU") {
+        
+      } else {
+        console.error("수당 내역 삭제 실패: ", message);
+        alert("수당 내역 삭제 실패: " + message);
+      }
+    } catch (e) {
+      console.error("수당 내역 삭제 중 에러 발생: ", e);
+      alert("수당 내역 삭제 중 에러 발생: " + e);
+    } finally {
+      setDeleteAllowanceLoading(false);
+    }
+  };
+
+  const handleCreateDeduction = async (dto: CreateDriverDeductionRequestDto) => {
+    if (!accessToken || createDeductionLoading || !selectedPayroll) return;
+
+    try {
+      setCreateDeductionLoading(true);
+
+      const response = await createDriverDeduction(selectedPayroll.id, dto, accessToken);
+      const { code, message } = response;
+      
+      if (code === "SU") {
+        setOpenDetailModal(false);
+        setOpenDeductionCreateModal(false);
+        await fetchAllDriverPayrolls();
+
+        if (selectedPayroll) {
+          handleDetail(selectedPayroll.id);
+        }
+      } else {
+        console.error("공제 내역 등록 실패: ", message);
+        alert("공제 내역 등록 실패: " + message);
+      }
+    } catch (e) {
+      console.error("공제 내역 등록 중 에러 발생: ", e);
+      alert("공제 내역 등록 중 에러 발생: " + e);
+    } finally {
+      setCreateDeductionLoading(false);
+    }
+  };
+
+  const handleUpdateDeduction = async (dto: UpdateDriverDeductionRequestDto) => {
+    if (!accessToken || updateDeductionLoading || !selectedPayroll) return;
+
+    try {
+      setUpdateDeductionLoading(true);
+
+      const response = await updateDriverDeduction(selectedPayroll.id, dto, accessToken);
+      const { code, message } = response;
+      
+      if (code === "SU") {
+        setOpenDetailModal(false);
+        await fetchAllDriverPayrolls();
+
+        if (selectedPayroll) {
+          handleDetail(selectedPayroll.id);
+        }
+      } else {
+        console.error("공제 내역 수정 실패: ", message);
+        alert("공제 내역 수정 실패: " + message);
+      }
+    } catch (e) {
+      console.error("공제 내역 수정 중 에러 발생: ", e);
+      alert("공제 내역 수정 중 에러 발생: " + e);
+    } finally {
+      setUpdateDeductionLoading(false);
+    }
+  };
+
+  const handleDeleteDeduction = async (driverDeductionId: number) => {
+    if (!accessToken || deleteDeductionLoading || !selectedPayroll) return;
+
+    try {
+      setDeleteDeductionLoading(true);
+
+      const response = await deleteDriverDeduction(selectedPayroll.id, driverDeductionId, accessToken);
+      const { code, message } = response;
+      
+      if (code === "SU") {
+        
+      } else {
+        console.error("공제 내역 삭제 실패: ", message);
+        alert("공제 내역 삭제 실패: " + message);
+      }
+    } catch (e) {
+      console.error("공제 내역 삭제 중 에러 발생: ", e);
+      alert("공제 내역 삭제 중 에러 발생: " + e);
+    } finally {
+      setDeleteDeductionLoading(false);
+    }
+  };
+  
   const handleChangePage = (_: ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1);
   };
-
-  const handlePayrollUpdateModalOpen = () => {
-    setOpenDetailModal(false);
-    setTimeout(() => setOpenPayrollUpdateModal(true), 0);
-  };
+  
+  const handleCreateModalOpen = () => setOpenCreateModal(true);
+  const handleCreateModalClose = () => setOpenCreateModal(false);
+  const handleDetailModalClose = () => setOpenDetailModal(false);
 
   const handlePayrollStatusModalOpen = (payrollId: number, newStatus: DriverPayrollStatus) => {
     setUpdatedStatusPayrollId(payrollId);
     setPendingStatus(newStatus);
     setOpenPayrollStatusUpdateModal(true);
   };
-  
-  const handleAllowanceUpdateModalOpen = () => {
-    setOpenDetailModal(false);
-    setTimeout(() => setOpenAllowanceUpdateModal(true), 0);
-  };
-
-  const handleDeductionUpdateModalOpen = () => {
-    setOpenDetailModal(false);
-    setTimeout(() => setOpenDeductionUpdateModal(true), 0);
-  };
-  
-  const handleCreateModalOpen = () => setOpenCreateModal(true);
-  const handleCreateModalClose = () => setOpenCreateModal(false);
-  const handleDetailModalClose = () => setOpenDetailModal(false);
-  const handlePayrollUpdateModalClose = () => setOpenPayrollUpdateModal(false);
   const handlePayrollStatusUpdateModalClose = () => {
     setUpdatedStatusPayrollId(null);
     setPendingStatus(null);
     setOpenPayrollStatusUpdateModal(false);
   };
+
   const handleAllowanceCreateModalOpen = () => setOpenAllowanceCreateModal(true);
   const handleAllowanceCreateModalClose = () => setOpenAllowanceCreateModal(false);
-  const handleAllowanceUpdateModalClose = () => setOpenAllowanceUpdateModal(false);
+  const handleDeductionCreateModalOpen = () => setOpenDeductionCreateModal(true);
   const handleDeductionCreateModalClose = () => setOpenDeductionCreateModal(false);
-  const handleDeductionUpdateModalClose = () => setOpenDeductionUpdateModal(false);
-  const handleLogModalClose = () => setOpenLogModal(false);
+
+  const handlePayrollLogModalOpen = () => {
+    if (!accessToken || updatePayrollLogLoading || statusPayrollLogLoading) return;
+
+    setOpenPayrollLogModal(true);
+  };
+  const handlePayrollLogModalClose = () => setOpenPayrollLogModal(false);
+
+  const handleAllowanceLogModalOpen = () => {
+    if (!accessToken || updateAllowanceLogLoading || updateDeductionLogLoading) return;
+    
+    setOpenAllowanceLogModal(true);
+    fetchDriverAllowanceUpdateLogs(0, 20, "desc");
+  };
+  const handleAllowanceLogModalClose = () => setOpenAllowanceLogModal(false);
+  
+  const handleDeductionLogModalOpen = () => {
+    if (!accessToken || updateAllowanceLogLoading || updateDeductionLogLoading) return;
+    
+    setOpenDeductionLogModal(true);
+    fetchDriverDeductionUpdateLogs(0, 20, "desc");
+  };
+  const handleDeductionLogModalClose = () => setOpenDeductionLogModal(false);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -504,27 +720,32 @@ function AllDriverPayrollListPage() {
               </Table>
             </TableContainer>
           </Paper>
+          {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+            <Stack spacing={2} alignItems="center">
+              <Pagination
+                count={listData.totalPages}
+                page={page + 1}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Stack>
+          )}
         </Stack>
 
-        <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
-          <Button variant="outlined" onClick={handleLog}>
-              수정 이력 조회
-            </Button>
+        <Stack sx={{ marginX: 3 }} spacing={2} direction="row" alignItems="center" justifyContent="right">
+          <Button variant="outlined" onClick={handlePayrollLogModalOpen}>
+            급여대장 수정 이력 조회
+          </Button>
+          <Button variant="outlined" onClick={handleAllowanceLogModalOpen}>
+            수당 내역 수정 이력 조회
+          </Button>
+          <Button variant="outlined" onClick={handleDeductionLogModalOpen}>
+            공제 내역 수정 이력 조회
+          </Button>
         </Stack>
-
-        {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
-          <Stack spacing={2} alignItems="center">
-            <Pagination
-              count={listData.totalPages}
-              page={page + 1}
-              onChange={handleChangePage}
-              variant="outlined"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
 
         <CreateDriverPayrollModal
           open={openCreateModal}
@@ -538,19 +759,14 @@ function AllDriverPayrollListPage() {
           open={openDetailModal}
           loading={detailLoading}
           onClose={handleDetailModalClose}
-          onPayrollEdit={handlePayrollUpdateModalOpen}
-          onAllowanceEdit={handleAllowanceUpdateModalOpen}
-          onDeductionEdit={handleDeductionUpdateModalOpen}
-          onDelete={handleDelete}
+          onPayrollUpdate={handlePayrollUpdate}
           onAllowanceCreate={handleAllowanceCreateModalOpen}
-        />
-
-        <UpdateDriverPayrollModal 
-          payroll={selectedPayroll}
-          open={openPayrollUpdateModal}
-          loading={updateLoading}
-          onClose={handlePayrollUpdateModalClose}
-          onConfirm={handlePayrollUpdate}
+          onAllowanceUpdate={handleUpdateAllowance}
+          onAllowanceDelete={handleDeleteAllowance}
+          onDeductionCreate={handleDeductionCreateModalOpen}
+          onDeductionUpdate={handleUpdateDeduction}
+          onDeductionDelete={handleDeleteDeduction}
+          onDelete={handleDelete}
         />
 
         <UpdateDriverPayrollStatusModal
@@ -562,24 +778,47 @@ function AllDriverPayrollListPage() {
           onConfirm={handlePayrollStatusUpdate}
         />
 
-        <DriverPayrollLogsModal
-          open={openLogModal}
-          onClose={handleLogModalClose}
-
-          updateLog={updateLogData}
-          updateLogLoading={updateLogLoading}
-          onUpdateLogChangePage={fetchDriverPayrollUpdateLogs}
-
-          statusLog={statusLogData}
-          statusLogLoading={statusLogLoading}
-          onStatusLogChangePage={fetchDriverPayrollStatusLogs}
-        />
-
         <CreateDriverAllowanceModal
           open={openAllowanceCreateModal}
           loading={createAllowanceLoading}
           onClose={handleAllowanceCreateModalClose}
           onConfirm={handleCreateAllowance}
+        />
+
+        <CreateDriverDeductionModal
+          open={openDeductionCreateModal}
+          loading={createDeductionLoading}
+          onClose={handleDeductionCreateModalClose}
+          onConfirm={handleCreateDeduction}
+        />
+
+        <DriverPayrollLogsModal
+          open={openPayrollLogModal}
+          onClose={handlePayrollLogModalClose}
+
+          updateLog={updatePayrollLogData}
+          updateLogLoading={updatePayrollLogLoading}
+          onUpdateLogChangePage={fetchDriverPayrollUpdateLogs}
+
+          statusLog={statusPayrollLogData}
+          statusLogLoading={statusPayrollLogLoading}
+          onStatusLogChangePage={fetchDriverPayrollStatusLogs}
+        />
+
+        <DriverAllowanceLogsModal 
+          log={updateAllowanceLogData}
+          open={openAllowanceLogModal}
+          loading={updateAllowanceLogLoading}
+          onClose={handleAllowanceLogModalClose}
+          onChangePage={fetchDriverAllowanceUpdateLogs}
+        />
+
+        <DriverDeductionLogsModal 
+          log={updateDeductionLogData}
+          open={openDeductionLogModal}
+          loading={updateDeductionLogLoading}
+          onClose={handleDeductionLogModalClose}
+          onChangePage={fetchDriverDeductionUpdateLogs}
         />
       </Box>
     </Box>

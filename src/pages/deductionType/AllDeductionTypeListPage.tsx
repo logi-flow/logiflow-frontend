@@ -20,7 +20,7 @@ import DeductionTypeLogsModal from "../../components/deductionTypeLog/DeductionT
 function AllDeductionTypeListPage() {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDcwMjE3MSwiZXhwIjoxNzYwNzM4MTcxfQ.szaHzRSOCgeSLUizx1y5DYKs3OrTSD62UntvS9fLbHo";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTI4MDU4MywiZXhwIjoxNzYxMzE2NTgzfQ.5Vh1Zv8BOVbryHuJt4bOtqrmA_G2GX1TJ5qCT2zm87A";
   const [page, setPage] = useState(0);
   const [queryKey, setQueryKey] = useState(0);
   const [listLoading, setListLoading] = useState(false);
@@ -333,27 +333,27 @@ function AllDeductionTypeListPage() {
               </Table>
             </TableContainer>
           </Paper>
+          {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+            <Stack spacing={2} alignItems="center">
+              <Pagination
+                count={listData.totalPages}
+                page={page + 1}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Stack>
+          )}
         </Stack>
 
         <Stack sx={{ marginX: 3 }} direction="row" alignItems="center" justifyContent="right">
           <Button variant="outlined" onClick={handleLog}>
-              수정 이력 조회
-            </Button>
+            수정 이력 조회
+          </Button>
         </Stack>
 
-        {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
-          <Stack spacing={2} alignItems="center">
-            <Pagination
-              count={listData.totalPages}
-              page={page + 1}
-              onChange={handleChangePage}
-              variant="outlined"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-            />
-          </Stack>
-        )}
 
         <CreateDeductionTypeModal
           open={openCreateModal}

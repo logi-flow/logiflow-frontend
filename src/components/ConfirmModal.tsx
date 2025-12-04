@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 
 interface Props {
   open: boolean;
-  type: "생성" | "수정" | "삭제" | "선택";
+  type: "생성" | "수정" | "삭제" | "선택" | "취소";
   onConfirm: () => void;
   onClose: () => void;
 }

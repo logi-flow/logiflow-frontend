@@ -18,7 +18,7 @@ const logNameMap: Record<string, string> = {
   is_active: "사용 여부"
 }
 
-function DeductionTypeLogsModal({log, open, loading, onClose, onChangePage }: Props) {
+function DeductionTypeLogsModal({ log, open, loading, onClose, onChangePage }: Props) {
   const size = 20;
   const sort = "desc";
 

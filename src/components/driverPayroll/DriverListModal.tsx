@@ -4,57 +4,26 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useEffect, useState, type ChangeEvent } from "react";
 import ConfirmModal from "../ConfirmModal";
 import type PageDto from "../../dtos/page.dto";
+import { getAllDriver } from "../../apis/driver/driver.apis";
+import type { GetDriverDetailResponseDto } from "../../dtos/driver/response/get-driver-detail.response.dto";
 // import { useCookies } from "react-cookie";
 
 interface Props {
   open: boolean;
   loading: boolean;
   onClose: () => void;
-  onConfirm: (driverId: number) => void;
+  onConfirm: (driver: GetDriverDetailResponseDto) => void;
 }
 
 function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
   // const [cookies] = useCookies(["accessToken"]);
   // const accessToken = cookies.accessToken;
-  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MDcwMjE3MSwiZXhwIjoxNzYwNzM4MTcxfQ.szaHzRSOCgeSLUizx1y5DYKs3OrTSD62UntvS9fLbHo";
+  const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTM2ODUwMywiZXhwIjoxNzYxNDA0NTAzfQ.eELS15CtpgUYE4xz80PcY8OwzbxIohsovE7O9WMulbk";
   const [listLoading, setListLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<GetDriverDetailResponseDto | null>(null);
   const [listData, setListData] = useState<PageDto> ({
-    content: [
-      {
-        "driverId": 4,
-        "name": "최현준",
-        "status": "WORKING",
-        "phoneNumber": "010-2000-0722",
-        "createdAt": "2025-08-29 16:43:52",
-        "updatedAt": "2025-08-29 16:43:52"
-      },
-      {
-        "driverId": 3,
-        "name": "이상혁",
-        "status": "WORKING",
-        "phoneNumber": "010-1996-0507",
-        "createdAt": "2025-08-29 16:43:45",
-        "updatedAt": "2025-08-29 16:43:45"
-      },
-      {
-        "driverId": 2,
-        "name": "이민형",
-        "status": "WORKING",
-        "phoneNumber": "010-2002-0206",
-        "createdAt": "2025-08-29 15:59:21",
-        "updatedAt": "2025-08-29 15:59:21"
-      },
-      {
-        "driverId": 1,
-        "name": "류민석",
-        "status": "WORKING",
-        "phoneNumber": "010-2002-1014",
-        "createdAt": "2025-08-29 11:12:45",
-        "updatedAt": "2025-08-29 11:12:45"
-      }
-    ],
+    content: [],
     number: 0,
     size: 0,
     totalElements: 0,
@@ -72,32 +41,32 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   
 
-  // useEffect(() => { 
-  //     // fetchAllDrivers();
-  //   }, [page, accessToken]);
+  useEffect(() => { 
+      fetchAllDrivers();
+    }, [page, accessToken]);
 
-  // const fetchAllDrivers = async () =>  {
-  //     if (!accessToken || listLoading) return;
+  const fetchAllDrivers = async () =>  {
+      if (!accessToken || listLoading) return;
           
-  //     try {
-  //       setListLoading(true);
+      try {
+        setListLoading(true);
   
-  //       const response = await getAllDriverPayroll(page, size, sort, accessToken);
-  //       const { code, message, data } = response;
+        const response = await getAllDriver(page, size, sort, accessToken);
+        const { code, message, data } = response;
         
-  //       if (code === "SU" && data) {
-  //         setListData(data);
-  //       } else {
-  //         console.error("기사 급여대장 전체 조회 실패: ", message);
-  //         alert("기사 급여대장 전체 조회 실패: " + message);
-  //       }
-  //     } catch (e) {
-  //       console.error("기사 급여대장 전체 조회 중 에러 발생: ", e);
-  //       alert("기사 급여대장 전체 조회 중 에러 발생: " + e);
-  //     } finally {
-  //       setListLoading(false);
-  //     }
-  //   };
+        if (code === "SU" && data) {
+          setListData(data);
+        } else {
+          console.error("기사 전체 조회 실패: ", message);
+          alert("기사 전체 조회 실패: " + message);
+        }
+      } catch (e) {
+        console.error("기사 전체 조회 중 에러 발생: ", e);
+        alert("기사 전체 조회 중 에러 발생: " + e);
+      } finally {
+        setListLoading(false);
+      }
+    };
 
   // const handleDetail = async (driverId: number) => {
   //   if (!accessToken || detailLoading) return;
@@ -108,7 +77,7 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
   //   try {
   //     setDetailLoading(true);
       
-  //     const response = await getDriverPayrollDetail(driverId, accessToken);
+  //     const response = await getMyInfo(driverId, accessToken);
   //     const { code, message, data } = response;
       
   //     if (code === "SU" && data) {
@@ -134,26 +103,26 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
     onClose();
   };
 
-  const handleSelect = (driverId: number) => {
+  const handleSelect = (driver: GetDriverDetailResponseDto) => {
     if (loading) return;
 
-    setSelectedDriverId(driverId);
+    setSelectedDriver(driver);
     setOpenConfirmModal(true);
   };
 
   const handleConfirmSelect = () => {
     // if (isCodeEmpty || isNameEmpty || loading) return;
-    if (!selectedDriverId || loading) return;
+    if (!selectedDriver || loading) return;
 
-    setSelectedDriverId(selectedDriverId);
-    onConfirm(selectedDriverId);
+    setSelectedDriver(selectedDriver);
+    onConfirm(selectedDriver);
     setOpenConfirmModal(false);
-    setSelectedDriverId(null);
+    setSelectedDriver(null);
   };
 
   const handleConfirmModalClose = () => {
     setOpenConfirmModal(false);
-    setSelectedDriverId(null);
+    setSelectedDriver(null);
   };
 
   return (
@@ -190,7 +159,7 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
                       <TableCell align="center">고유번호</TableCell>
                       <TableCell align="center">이름</TableCell>
                       <TableCell align="center">휴대폰번호</TableCell>
-                      <TableCell align="center">상세 조회</TableCell>
+                      {/* <TableCell align="center">상세 조회</TableCell> */}
                       <TableCell align="center">선택</TableCell>
                     </TableRow>
                   </TableHead>
@@ -211,19 +180,17 @@ function DriverListModal({ open, loading, onClose, onConfirm }: Props) {
                           <TableCell align="center">{row.driverId}</TableCell>
                           <TableCell align="center">{row.name}</TableCell>
                           <TableCell align="center">{row.phoneNumber}</TableCell>
-                          <TableCell align="center">
-                            {/* <IconButton onClick={() => handleDetail(row.id)}> */}
-                            <IconButton>
+                          {/* <TableCell align="center">
+                            <IconButton onClick={() => handleDetail(row.id)}>
                               <EditNoteIcon />
                             </IconButton>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell align="center">
                             <Button 
                               sx={{ width: '70px', height: '100%' }}
                               variant="contained"
-                              // size="large"
                               disabled={listLoading}
-                              onClick={() => handleSelect(row.driverId)}
+                              onClick={() => handleSelect(row)}
                             >
                               선택
                             </Button>

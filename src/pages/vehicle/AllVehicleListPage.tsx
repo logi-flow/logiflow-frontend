@@ -1,4 +1,4 @@
-import type { SelectChangeEvent } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography, type SelectChangeEvent } from "@mui/material";
 import { createVehicle, deleteVehicle, getAllVehicle, getVehicleDetail, updateVehicle, updateVehicleStatus } from "../../apis/vehicle/vehicle.apis";
 import type PageDto from "../../dtos/page.dto";
 import type { GetAllVehicleRseponseDto } from "../../dtos/vehicle/response/get-all-vehicle.response.dto";
@@ -8,6 +8,12 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import type { CreateVehicleRequestDto } from "../../dtos/vehicle/request/create-vehicle.request.dto";
 import type { UpdateVehicleRequestDto } from "../../dtos/vehicle/request/update-vehicle.request.dto";
 import type { UpdateVehicleStatusRequestDto } from "../../dtos/vehicle/request/update-vehicle-status.request.dto";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
+import CreateVehicleModal from "../../components/vehicle/CreateVehicleModal";
+import VehicleDetailModal from "../../components/vehicle/VehicleDetailModal";
+import UpdateVehicleModal from "../../components/vehicle/UpdateVehicleModal";
+import UpdateVehicleStatusModal from "../../components/vehicle/UpdateVehicleStatusModal";
 
 const accessToken = "";
 const vehicleStatusColorMap: Record<VehicleStatus, "success" | "primary" | "warning" | "error" | "default"> = {
@@ -17,12 +23,19 @@ const vehicleStatusColorMap: Record<VehicleStatus, "success" | "primary" | "warn
     [VehicleStatus.DELETED]: "error",
 };
 
+const vehicleStatusMap: Record<VehicleStatus, string> = {
+    [VehicleStatus.AVAILABLE]: "운행 가능",
+    [VehicleStatus.IN_USE]: "운행중",
+    [VehicleStatus.UNDER_MAINTENANCE]: "정비중",
+    [VehicleStatus.DELETED]: "삭제됨",
+}
+
 function AllVehicleListPage() {
     const [page, setPage] = useState(0);
     const [queryKey, setQueryKey] = useState(0);
 
     const [listLoading, setListLoading] = useState(false);
-    const [detailLoding, setDetailLoading] = useState(false);
+    const [detailLoading, setDetailLoading] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
     const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -120,7 +133,7 @@ function AllVehicleListPage() {
     };
 
     const handleDetail = async (vehicleId: number) => {
-        if (!accessToken || detailLoding) return;
+        if (!accessToken || detailLoading) return;
 
         setOpenDetailModal(true);
         setSelectedVehicle(undefined);
@@ -198,7 +211,7 @@ function AllVehicleListPage() {
     };
 
     const handleDelete = async (vehicleId: number) => {
-        if (!accessToken || detailLoding) return;
+        if (!accessToken || detailLoading) return;
 
         try {
             setDetailLoading(true);
@@ -232,7 +245,7 @@ function AllVehicleListPage() {
     const handleStatusUpdateModalOpen = (vehicleId: number, newStatus: VehicleStatus) => {
         setUpdateStatusVehicleId(vehicleId);
         setPendingStatus(newStatus);
-        setOpenUpdateModal(true);
+        setOpenUpdateStatusModal(true);
     };
 
     const handleCreateModalOpen = () => setOpenCreateModal(true);
@@ -246,7 +259,159 @@ function AllVehicleListPage() {
     };
 
     return (
-        <></>
+        <Box sx={{ display: 'flex' }}>
+            <Header />
+            <Sidebar />
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Toolbar />
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Typography variant="h6" fontWeight={700}>
+                        차량 관리
+                    </Typography>
+                </Stack>
+
+                <Stack sx={{ p: 3 }} spacing={2} direction="row" alignItems="center" justifyContent="right">
+                    <Button
+                        sx={{ width: '80px' }}
+                        variant="contained"
+                        size="large"
+                        disabled={listLoading}
+                        onClick={handleSearch}
+                    >
+                        조회
+                    </Button>
+                    <Button
+                        sx={{ width: '80px' }}
+                        variant="contained"
+                        size="large"
+                        disabled={listLoading}
+                        onClick={handleCreateModalOpen}
+                    >
+                        추가
+                    </Button>
+                </Stack>
+
+                <Stack sx={{ p: 3 }}>
+                    <Paper sx={{ width: '100%', mb: 2 }}>
+                        <TableContainer>
+                            <Table sx={{ minWidth: 750 }}>
+                                <caption>총 {listData.totalElements}건</caption>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">순번</TableCell>
+                                        <TableCell align="center">차량 번호</TableCell>
+                                        <TableCell align="center">모델명</TableCell>
+                                        <TableCell align="center">상태</TableCell>
+                                        <TableCell align="center">등록일</TableCell>
+                                        <TableCell align="center">상세 조회</TableCell>
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    {listLoading && (
+                                        <TableRow>
+                                            <TableCell colSpan={6} align="center">
+                                                <CircularProgress color="inherit" size={28} sx={{ mx: 'auto ' }} />
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+
+                                    {!listLoading && listData.content.map((row, index) => (
+                                        <TableRow hover key={row.vehicleId}>
+                                            <TableCell align="center">{page * size + index + 1}</TableCell>
+                                            <TableCell align="center">{row.vehicleNumber}</TableCell>
+                                            <TableCell align="center">{row.modelName}</TableCell>
+                                            <TableCell align="center">
+                                                <Select
+                                                    size="small"
+                                                    value={row.status}
+                                                    disabled={updatedStatusVehicleId === row.vehicleId || listLoading}
+                                                    onChange={(e) => handleSelectChange(e, row.vehicleId, row.status)}
+                                                    renderValue={(value) => (
+                                                        <Chip
+                                                            size="small"
+                                                            label={vehicleStatusMap[value as VehicleStatus] ?? "알 수 없음"}
+                                                            color={vehicleStatusColorMap[value as VehicleStatus] ?? "default"}
+                                                        />
+                                                    )}
+                                                >
+                                                    {Object.values(VehicleStatus)
+                                                        .filter((status) => status !== VehicleStatus.DELETED)
+                                                        .map((status) => (
+                                                            <MenuItem key={status} value={status}>
+                                                                <Chip
+                                                                    size="small"
+                                                                    label={vehicleStatusMap[status] ?? "알 수 없음"}
+                                                                    color={vehicleStatusColorMap[status] ?? "default"}
+                                                                />
+                                                            </MenuItem>
+                                                        ))}
+                                                </Select>
+                                            </TableCell>
+                                            <TableCell align="center">{new Date(row.createdAt).toLocaleString('ko-KR')}</TableCell>
+                                            <TableCell align="center">
+                                                <Button
+                                                    size="small"
+                                                    variant="contained"
+                                                    onClick={() => handleDetail(row.vehicleId)}
+                                                >
+                                                    상세
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
+                </Stack>
+
+                {!listLoading && queryKey > 0 && listData.totalPages > 0 && (
+                    <Stack spacing={2} alignItems="center">
+                        <Pagination
+                            count={listData.totalPages}
+                            page={page + 1}
+                            onChange={handleChangePage}
+                            variant="outlined"
+                            shape="rounded"
+                            showFirstButton
+                            showLastButton
+                        />
+                    </Stack>
+                )}
+
+                <CreateVehicleModal
+                    open={openCreateModal}
+                    loading={createLoading}
+                    onClose={handleCreateModalClose}
+                    onConfirm={handleCreate}
+                />
+
+                <VehicleDetailModal
+                    vehicle={selectedVehicle}
+                    open={openDetailModal}
+                    loading={detailLoading}
+                    onClose={handleDetailModalClose}
+                    onEdit={handleUpdateModalOpen}
+                    onDelete={handleDelete}
+                />
+                <UpdateVehicleModal
+                    vehicle={selectedVehicle}
+                    open={openUpdateModal}
+                    loading={updateLoading}
+                    onClose={handleUpdateModalClose}
+                    onConfirm={handleUpdate}
+                />
+                <UpdateVehicleStatusModal
+                    vehicleId={updatedStatusVehicleId}
+                    newStatus={pendingStatus}
+                    open={openUpdateStatusModal}
+                    loading={updateLoading}
+                    onClose={handleStatusUpdateModalClose}
+                    onConfirm={handleStatusUpdate}
+                />
+            </Box>
+        </Box>
     );
 }
 
